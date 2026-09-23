@@ -155,22 +155,24 @@ samp {
 
 /* 头像 */
 .book-layout-landing .markdown > p:first-child {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 .book-layout-landing .markdown > p:first-child img {
-  width: 6.5rem;
-  height: 6.5rem;
+  width: 9rem;
+  height: 9rem;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--gray-200);
   box-shadow: 0 6px 20px rgba(139, 95, 168, 0.18);
 }
 
-/* 名字 */
+/* 名字（英文花体） */
 .book-layout-landing .markdown h1 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: "Segoe Script", "Brush Script MT", "Snell Roundhand",
+    "Apple Chancery", "Lucida Handwriting", cursive;
+  font-size: 3rem;
+  font-weight: 400;
+  margin-top: 0;
   margin-bottom: 0.5rem;
 }
 
