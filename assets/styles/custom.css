@@ -101,6 +101,12 @@ samp {
   line-height: 1.75;
 }
 
+/* 笔记页与章节页：正文与上方面包屑导航之间留出空间 */
+.book-kind-page .markdown,
+.book-kind-section .markdown {
+  margin-top: 2rem;
+}
+
 .markdown h1,
 .markdown h2,
 .markdown h3,
