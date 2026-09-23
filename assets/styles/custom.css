@@ -77,6 +77,15 @@ body {
     Arial, sans-serif;
 }
 
+/* 侧边栏 logo（头像）：圆形 */
+.book-brand img {
+  height: 1.6em;
+  width: 1.6em;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--gray-200);
+}
+
 /* 代码等宽字体 */
 code,
 pre,

@@ -21,7 +21,7 @@ disablePathToLower = true
   # 主题：粉紫配色（lavender），自动明暗切换
   BookTheme = 'lavender-auto'
   # 侧边栏 logo
-  BookLogo = 'logo.svg'
+  BookLogo = 'avatar.jpg'
   # 右侧文章目录
   BookToC = true
   # 页面顶部面包屑
