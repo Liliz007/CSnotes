@@ -2,8 +2,10 @@
 layout: landing
 ---
 
-# 我的学习笔记 {anchor=false}
+![Liliz](avatar.svg)
 
-CS 学习笔记，按年级与课程整理。
+# Liliz {anchor=false}
+
+Stay hungry, stay foolish.
 
 {{<button href="/大二/">}}开始阅读 →{{</button>}}
