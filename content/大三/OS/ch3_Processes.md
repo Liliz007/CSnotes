@@ -19,6 +19,7 @@ process includes:
 * heap section：动态分配的内存(C中malloc出来的那种)
 
 process in memory belike:
+
 ![](../image/2026-09-22-17-21-00.png)
 * 最底下是0地址，向上增大.最顶上是maxVA(图中展示的是virtual addr)
 * Hole:中间没被占用的VA
