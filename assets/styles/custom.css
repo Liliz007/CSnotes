@@ -1,0 +1,109 @@
+/* =========================================================
+   站点自定义样式
+   通过覆盖 Book 主题的 CSS 变量与少量选择器实现美化
+   ========================================================= */
+
+/* 全局字体：中西文混排 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans CJK SC", "Source Han Sans SC", "Helvetica Neue",
+    Arial, sans-serif;
+}
+
+/* 代码等宽字体 */
+code,
+pre,
+kbd,
+samp {
+  font-family: "SFMono-Regular", "JetBrains Mono", "Fira Code",
+    Menlo, Consolas, "Cascadia Code", "Courier New", monospace;
+}
+
+/* 链接颜色：蓝色，明暗自动适配 */
+:root,
+:root[data-theme="catppuccin-light"],
+:root[data-theme="catppuccin-auto"] {
+  --color-link: #1e66f5;
+  --color-visited-link: #8839ef;
+}
+
+:root[data-theme="catppuccin-dark"] {
+  --color-link: #8caaee;
+  --color-visited-link: #ca9ee6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="catppuccin-auto"] {
+    --color-link: #8caaee;
+    --color-visited-link: #ca9ee6;
+  }
+}
+
+/* 正文排版：字号与行高更舒适 */
+.markdown {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+/* 标题加粗、紧凑 */
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* 二级标题下加淡分隔线，增强层次 */
+.markdown h2 {
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+/* 代码块圆角更柔和 */
+.markdown pre,
+.markdown .highlight {
+  border-radius: 0.5rem;
+}
+
+/* 按钮：实心主按钮 */
+.markdown a.book-btn[href] {
+  color: #fff;
+  background: var(--color-link);
+  border-color: var(--color-link);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 2.4;
+  padding: 0 1.75rem;
+  transition: opacity 0.15s ease;
+}
+
+.markdown a.book-btn[href]:hover {
+  opacity: 0.85;
+  text-decoration: none;
+}
+
+/* 首页 landing 居中排版 */
+.book-layout-landing .markdown {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding-top: 4rem;
+  text-align: center;
+}
+
+.book-layout-landing .markdown h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.book-layout-landing .markdown > p {
+  color: var(--gray-500);
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+}

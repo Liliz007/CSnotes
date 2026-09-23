@@ -18,8 +18,10 @@ disablePathToLower = true
     style = 'github'
 
 [params]
-  # 主题：light / dark / auto
-  BookTheme = 'auto'
+  # 主题：Catppuccin 配色，自动明暗切换
+  BookTheme = 'catppuccin-auto'
+  # 侧边栏 logo
+  BookLogo = 'logo.svg'
   # 右侧文章目录
   BookToC = true
   # 页面顶部面包屑
