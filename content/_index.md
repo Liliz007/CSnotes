@@ -2,7 +2,7 @@
 layout: landing
 ---
 
-![Liliz](avatar.svg)
+![Liliz](avatar.jpg)
 
 # Liliz {anchor=false}
 
