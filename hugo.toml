@@ -1,0 +1,46 @@
+baseURL = 'https://Liliz007.github.io/CSnotes/'
+locale = 'zh-cn'
+defaultContentLanguage = 'zh-cn'
+title = '我的学习笔记'
+theme = 'hugo-book'
+
+# 保留 URL 大小写（如 /大三/OS/ 而非 /大三/os/）
+disablePathToLower = true
+
+# Markdown 渲染与代码高亮
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.tableOfContents]
+    startLevel = 1
+  [markup.highlight]
+    style = 'github'
+
+[params]
+  # 主题：light / dark / auto
+  BookTheme = 'auto'
+  # 右侧文章目录
+  BookToC = true
+  # 页面顶部面包屑
+  BookBreadcrumbs = true
+  # 侧边栏渲染所有顶级分区（大一 / 大二 / 大三）
+  BookSection = '/'
+  # 全文搜索（含中文分词）
+  BookSearch = true
+
+# 首页（landing 布局）顶部导航
+[[menu.home]]
+  name = '大一'
+  pageRef = '/大一/'
+  weight = 1
+
+[[menu.home]]
+  name = '大二'
+  pageRef = '/大二/'
+  weight = 2
+
+[[menu.home]]
+  name = '大三'
+  pageRef = '/大三/'
+  weight = 3
