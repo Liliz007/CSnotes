@@ -1,0 +1,11 @@
+<script src="{{ "katex/katex.min.js" | relURL }}"></script>
+<script src="{{ "katex/auto-render.min.js" | relURL }}"></script>
+<script>
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false }
+    ],
+    throwOnError: false
+  });
+</script>
