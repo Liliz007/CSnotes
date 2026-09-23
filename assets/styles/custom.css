@@ -182,3 +182,18 @@ samp {
   font-size: 1.1rem;
   margin-bottom: 2.25rem;
 }
+
+/* ---------- 卡片 ---------- */
+.book-card {
+  border: 1px solid var(--gray-200);
+  border-radius: 0.5rem;
+  background: var(--gray-100);
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.book-card-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
