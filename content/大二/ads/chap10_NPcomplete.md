@@ -1,5 +1,4 @@
 ---
-title: NP完全性
 weight: 10
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: AVL树 & Splay树
 weight: 1
 ---
 
