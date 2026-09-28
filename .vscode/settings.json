@@ -1,0 +1,4 @@
+{
+  // Paste Image 扩展：把粘贴的图片保存到当前笔记所在目录的 image/ 子文件夹
+  "pasteImage.path": "${currentFileDir}/image"
+}
