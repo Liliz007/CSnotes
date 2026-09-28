@@ -1,4 +1,5 @@
 ---
+title: "chap7_Divide&Conquer"
 weight: 7
 ---
 

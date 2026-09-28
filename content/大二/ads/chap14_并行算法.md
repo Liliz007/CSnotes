@@ -1,4 +1,5 @@
 ---
+title: chap14_并行算法
 weight: 14
 ---
 

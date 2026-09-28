@@ -1,4 +1,5 @@
 ---
+title: chap5_BinomialQueue
 weight: 5
 ---
 

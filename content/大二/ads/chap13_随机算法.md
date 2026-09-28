@@ -1,4 +1,5 @@
 ---
+title: chap13_随机算法
 weight: 13
 ---
 

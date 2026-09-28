@@ -1,4 +1,5 @@
 ---
+title: chap10_NPcomplete
 weight: 10
 ---
 
