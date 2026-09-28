@@ -1,0 +1,8 @@
+{{- $dst := .Destination -}}
+{{- $dst = replace $dst "\\" "/" -}}
+{{- $dst = strings.TrimPrefix "./" $dst -}}
+{{- $bare := and (not (hasPrefix $dst "/")) (not (hasPrefix $dst "http://")) (not (hasPrefix $dst "https://")) (not (hasPrefix $dst "data:")) (not (hasPrefix $dst "#")) (not (hasPrefix $dst "mailto:")) (not (hasPrefix $dst "../")) -}}
+{{- if and (eq .Page.Kind "page") $bare -}}
+  {{- $dst = printf "../%s" $dst -}}
+{{- end -}}
+<img src="{{ $dst | safeURL }}" alt="{{ .Text }}" {{ with .Title }}title="{{ . }}"{{ end }}/>
