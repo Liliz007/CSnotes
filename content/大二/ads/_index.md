@@ -1,7 +1,7 @@
 ---
-title: 算法与数据结构
+title: ads
 weight: 1
 bookCollapseSection: true
 ---
 
-# 算法与数据结构
+# ads

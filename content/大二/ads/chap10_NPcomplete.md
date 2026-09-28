@@ -1,3 +1,8 @@
+---
+title: NP完全性
+weight: 10
+---
+
 # 1. Introduction
 
 ## 1.1 边的旅程 vs. 点的旅程

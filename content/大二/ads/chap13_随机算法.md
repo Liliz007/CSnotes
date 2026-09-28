@@ -1,3 +1,8 @@
+---
+title: 随机算法
+weight: 13
+---
+
 # 1.Intro : 什么是随机？
 
 ## 1.1 平均情况分析(Average-Case Analysis)

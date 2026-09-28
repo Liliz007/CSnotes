@@ -1,3 +1,8 @@
+---
+title: AVL树 & Splay树
+weight: 1
+---
+
 #  AVLtree & SplayTree
 
 ## 1. AVL tree
