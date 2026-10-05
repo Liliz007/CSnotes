@@ -49,7 +49,7 @@ Q6 为何收到I/O请求之后不能直接进ready，而要先waiting?
 * 因为在等待同步的I/O操作完成。而相对于处理器来说，I/O很慢
 * 若先进入ready queue中并且被scheduler选中了，就跑不了
 * 会在wait-queue中等待
-{{<\card>}}
+{{</card>}}
 
 
 ## 补充：kernel code 的两种执行上下文
@@ -214,7 +214,7 @@ CPU burst：一次连续纯计算的时间段。对于CPU-bound，CPU burst很�
 {{<card>}}
 想提升CPU利用率，如何搭配不同类型的进程？
 * 希望context switch的overhead(开销)能小一些。也就是说，要提高context switch的速率
-{{<\card>}}
+{{</card>}}
 
 # 3.Operations on Processes
 
@@ -269,7 +269,7 @@ demo:运行外部进程，不再执行child原来的代码：
 * UNIX中，fork()后，使用exec()可以用新程序替换掉当前进程的内存空间。从而直接开始运行新程序了
 * fork()搭配exec()的用途：让子进程运行外部程序（不这么做的话，子进程就跟父进程一模一样，是duplicate的）
 * 但进行exec()之后，这个进程的pid也不会变；所以依然保持着与父进程的父子关系和调度关系
-{{<\card>}}
+{{</card>}}
 
 创建进程后，有两种运行模式：
 * 父子同时运行：若父亲先结束，儿子就直接成孤儿
