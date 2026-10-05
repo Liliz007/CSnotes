@@ -211,7 +211,7 @@ medium-term|swap in / swap out|恢复/挂起
 
 CPU burst：一次连续纯计算的时间段。对于CPU-bound，CPU burst很长；另一个则很短
 
-{{<\card>}}
+{{<card>}}
 想提升CPU利用率，如何搭配不同类型的进程？
 * 希望context switch的overhead(开销)能小一些。也就是说，要提高context switch的速率
 {{<\card>}}
@@ -264,7 +264,7 @@ demo:运行外部进程，不再执行child原来的代码：
 * 调用外部程序，会把当前进程的上下文(VAS,Virtual Address Space)覆盖掉。从而child就不执行了
 * 孤儿进程：父进程结束后子进程的父亲会变成进程1，也就是parent_process_id变成1
 
-{{<\card>}}
+{{<card>}}
 ![](image/2026-09-30-14-48-16.png)
 * UNIX中，fork()后，使用exec()可以用新程序替换掉当前进程的内存空间。从而直接开始运行新程序了
 * fork()搭配exec()的用途：让子进程运行外部程序（不这么做的话，子进程就跟父进程一模一样，是duplicate的）
