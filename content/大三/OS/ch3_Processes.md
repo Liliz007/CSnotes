@@ -38,7 +38,7 @@ process in memory belike:
 * library mappings：
   * 动态链接器将用到的库从disk中load进进程的VAS，并用`mmap`映射到某段地址。
 
-{{<\card>}}
+{{<card>}}
 quiz解析
 Q4
 * VAS是分配给进程的，而非线程。也就是说，同一进程内的所有线程共用一块内存
