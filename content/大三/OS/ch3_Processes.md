@@ -214,6 +214,9 @@ CPU burst：一次连续纯计算的时间段。对于CPU-bound，CPU burst很�
 {{<card>}}
 想提升CPU利用率，如何搭配不同类型的进程？
 * 希望context switch的overhead(开销)能小一些。也就是说，要提高context switch的速率
+* 由于CPU除saving/loading states之外没有执行对用户有帮助的work，所以这块被看作是纯overhead
+* overhead:没用但无法避免的开销
+* quiz补充：context switch并不会使中断的进程的PCB被永久deallocate from main memory。但是内存不够用时medium-term scheduler会把未完成的进程swap out到disk中
 {{</card>}}
 
 # 3.Operations on Processes
@@ -289,9 +292,10 @@ demo:运行外部进程，不再执行child原来的代码：
 * Cooperating Process：影响他人也可被影响的进程
 
 进程合作的好处：
-* 信息共享
-* 计算加速
-* 模块化
+* 信息共享 info sharing
+* 计算加速 computation speed-up
+* 模块化 modularity
+* 便利 convenience : 如copy-paste的方法
 
 ## 4.1 Producer-Consumer Problem，生产者-消费者问题
 
@@ -301,25 +305,32 @@ demo:运行外部进程，不再执行child原来的代码：
 
 buffer可以分两类：
 * unbounded buffer,无界缓冲区：空间无限大，不可能被填满
+  * 理论上是没有无限大的，但是当这个具体问题中没有可能将其填满，buffer就可以看作无限大。
 * bounded buffer,有界缓冲区：会被填满。这种情况更值得研究
+* 他俩的key difference：unbounded的CPU不用等待
 
 shared data:
 ```c
-Shared data#define BUFFER_SIZE 10 typedef struct { . . . } item; item buffer[BUFFER_SIZE]; int in = 0; int out = 0;
+#define BUFFER_SIZE 10 
+typedef struct { . . . } item; 
+item buffer[BUFFER_SIZE]; 
+int in = 0; int out = 0;
 ```
 
 ```c
+//producer
 //存数据。把buffer当作环状队列
 while (true) {
  Produce an item;
  while (((in + 1) % BUFFER_SIZE == out))  //为了与in=out区分。这样会始终有一格空的
- ; /* do nothing -- no free buffers */
+  ; /* do nothing -- no free buffers */
  buffer[in] = item;
  in = (in + 1) % BUFFER_SIZE;
  }
 ```
 
 ```c
+//consumer
 //取数据。
 while (true) {
   while (in == out)
@@ -334,21 +345,95 @@ while (true) {
 
 buffer共享，in/out也共享
 
-# 5.Interprocess Communication
+buffer中最多存$BUFFER_SIZE - 1$个元素（为了区分empty和full这俩状态）
+
+把buffer用满？？：
+```c
+while (true) {
+  Produce an item;
+  buffer[in] = item;
+  while (((in + 1) % BUFFER_SIZE == out))  //为了与in=out区分。这样会始终有一格空的
+    ; /* do nothing -- no free buffers */
+
+  in = (in + 1) % BUFFER_SIZE;
+ }
+```
+
+>进一步，引入count参数：表示buffer中元素数量。有潜在问题？？
+
+{{<card>}}
+linux中的pipes(管道)：
+```bash
+processA | processB  #A会作为信息的生产者，其输出的信息会流通到B
+processA | processB | processC | ...  #可以级联。每个管道中流通的信息不同，主要取决于管道左端相邻的这个进程的output是什么
+```
+
+pipe操作很适合于处理表格数据。如把命令A的输出交给命令B，有点像数据库里面那种SQL expr
+```bash
+grep "Sales" employee.csv | cut -d',' -f2,4 | sort -t','
+#把匹配的含Sales行数据交给cut，cut选出第2和4列交给sort
+#在大规模数据中，cut不用等grep全处理完，选出来就直接往后流。是streamly的
+```
+{{</card>}}
+
+# 5.IPC,Interprocess Communication
 
 两种重要模型：message passing 和 shared memory
 
 ![](image/2026-09-30-14-49-18.png)
 
-都是可以建立双向联络，也可以单向
+* 都是可以建立双向联络，也可以单向
+* 对于shared mem
+  * shared memory速度比message passing快。因为后者还要进行memory copy(读和写的时候都要)
+  * 什么mem mapping？？
 
-share memory速度比message passing快。因为后者还要进行memory copy(读和写的时候都要)
+* 对于msg passing
+  * 为了收发message，需要在两进程间建立communication link
+  * 为了标志双方，需要考虑naming的问题
 
-为了收发message，需要在两进程间建立communication link
+## 5.1 msg passing
 
-为了标志双方，需要考虑naming的问题
+### 1 Direct Communication
 
+**symmetric communication：** 通信的Processes必须显式地name each other
+  * send(P,msg)：发给P
+  * receive(Q,msg)：从Q收
+**asymmetric communication：** 接收方事先不知道具体是谁发出的
+  * send(P,msg)
+  * receive(id,msg):id是一个输出的参数，从msg中解析并返回出来，表示发送者(id:pass by ref？？)
+  * 这个比symmetric应用更普遍，因为它较为灵活
+
+### 2 Indirect Communication
+
+**mailbox(信箱)：** 进程间借助它进行通信。AKA *ports(端口)*
+  * 每个mailbox有自己的id。进程间需要有shared mailbox才能通信
+  * 可能有多个processes共用一个mailbox。此时可以群聊
+  * well-known port：大家都知道、都用的port
+  * 每对进程可能有多对communication links，每个link对应一个mailbox
+
+mailbox的调度？如果有多个接收者，谁应该收到msg？
+
+### Synchronization
+
+msg passing可以是阻塞(blocking)/非阻塞(non-blocking)的
+* Blocking
+  * send: has the sender blocked until the message is received
+  * receive: has the receiver block until a message is available
+* Non-blocking
+  * send: 发完就跑，继续干别的
+  * receive: has the receiver receive a valid message or null
+
+### Buffering
+
+Indirect:不允许zero capacity buffer，因为mailbox至少要存一条信息
+补充
+
+## 5.2 shared memory
+
+mmap
+munmap
 
 
 # 6.Communication in Client-Server Systems
 
+没讲。也许略？
