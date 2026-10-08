@@ -347,19 +347,35 @@ buffer共享，in/out也共享
 
 buffer中最多存$BUFFER_SIZE - 1$个元素（为了区分empty和full这俩状态）
 
-把buffer用满？？：
+把buffer用满：
 ```c
 while (true) {
   Produce an item;
-  buffer[in] = item;
-  while (((in + 1) % BUFFER_SIZE == out))  //为了与in=out区分。这样会始终有一格空的
+  buffer[in] = item; //把这个放到while前
+  while (((in + 1) % BUFFER_SIZE == out))  
     ; /* do nothing -- no free buffers */
-
+    //buffer[in] = item;
   in = (in + 1) % BUFFER_SIZE;
  }
 ```
 
->进一步，引入count参数：表示buffer中元素数量。有潜在问题？？
+```
+in|out|buffer
+-|-|-
+0|0|[A,0,0,0]
+1|0|[A,B,0,0]
+2|0|[A,B,C,0]
+3|0|[A,B,C,D]
+
+in|out|buffer
+-|-|-
+0|0->1|[A,B,C,D]->[0,B,C,D]
+1|1->2|[0,B,C,D]->[0,0,C,D]
+2|2->3|[0,0,C,D]->[0,0,0,D]
+3|3(判断后卡住)|[0,0,0,D]
+```
+
+>进一步，引入count参数：表示buffer中元素数量。有潜在问题（同步）
 
 {{<card>}}
 linux中的pipes(管道)：
@@ -385,7 +401,26 @@ grep "Sales" employee.csv | cut -d',' -f2,4 | sort -t','
 * 都是可以建立双向联络，也可以单向
 * 对于shared mem
   * shared memory速度比message passing快。因为后者还要进行memory copy(读和写的时候都要)
-  * 什么mem mapping？？
+  * mem mapping:进程共享同一块物理内存，但每个进程有自己的私有虚拟地址空间VAS。所以要通过页表映射，把这块物理内存同时映射进两个进程的VAS
+
+{{<card>}}
+```bash
+// 进程 A
+int fd = shm_open("/my_shm", O_CREAT | O_RDWR, 0666);
+ftruncate(fd, 4096);
+void *ptr = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+// ptr 就是映射后的虚拟地址，可以直接读写
+
+// 进程 B
+int fd = shm_open("/my_shm", O_RDWR, 0666);
+void *ptr = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+// 进程 B 的 ptr 指向同一块物理内存
+```
+mmap 的关键参数：
+* MAP_SHARED：共享映射，多个进程看到同一块内存。
+* MAP_PRIVATE：私有映射，写时复制（copy-on-write）？？
+{{<\card>}}
+
 
 * 对于msg passing
   * 为了收发message，需要在两进程间建立communication link
@@ -400,7 +435,7 @@ grep "Sales" employee.csv | cut -d',' -f2,4 | sort -t','
   * receive(Q,msg)：从Q收
 **asymmetric communication：** 接收方事先不知道具体是谁发出的
   * send(P,msg)
-  * receive(id,msg):id是一个输出的参数，从msg中解析并返回出来，表示发送者(id:pass by ref？？)
+  * receive(id,msg):id是一个输出的参数，从msg中解析并返回出来，表示发送者(id是pass by ref，给了一个地址/引用)
   * 这个比symmetric应用更普遍，因为它较为灵活
 
 ### 2 Indirect Communication
