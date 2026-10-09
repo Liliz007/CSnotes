@@ -419,7 +419,7 @@ void *ptr = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 mmap 的关键参数：
 * MAP_SHARED：共享映射，多个进程看到同一块内存。
 * MAP_PRIVATE：私有映射，写时复制（copy-on-write）？？
-{{<\card>}}
+{{</card>}}
 
 
 * 对于msg passing
