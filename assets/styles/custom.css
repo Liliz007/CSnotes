@@ -3,6 +3,13 @@
    主题：粉紫（lavender）——低饱和、高亮度
    ========================================================= */
 
+@font-face {
+  font-family: "MyChineseFont";          /* 随便起个名字 */
+  src:url("/fonts/ZiXiaoHunGeYiXiaoShouJiXingKaiTi-2.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;                     /* 先显示系统字体，加载完再替换 */
+}
+
 /* ---------- 主题配色变量 ---------- */
 
 /* 亮色：浅紫底 + 深紫字 + 中紫链接 */
@@ -71,7 +78,8 @@
 
 /* ---------- 全局字体：中西文混排 ---------- */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+  font-family: -apple-system, BlinkMacSystemFont, "ZiXiaoHunGeYiXiaoShouJiXingKaiTi-2",
+    "Segoe UI",
     "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
     "Noto Sans CJK SC", "Source Han Sans SC", "Helvetica Neue",
     Arial, sans-serif;
