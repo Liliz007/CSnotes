@@ -447,6 +447,7 @@ mmap 的关键参数：
   * 每对进程可能有多对communication links，每个link对应一个mailbox
 
 mailbox的调度？如果有多个接收者，谁应该收到msg？
+* system需要制定一些协议来规定获取msg的顺序（防止未定义行为）
 
 ### Synchronization
 
@@ -463,11 +464,19 @@ msg passing可以是阻塞(blocking)/非阻塞(non-blocking)的
 Indirect:不允许zero capacity buffer，因为mailbox至少要存一条信息
 补充
 
+如果是direct，zero capacity buffer下，sender要block到对面收到。（相当于一条电话线，即时通信）
+
 ## 5.2 shared memory
 
-mmap
-munmap
+通过读写内存来通信，速度快，不需要kernel的介入(intervention)。kernel介入要用到system call.
 
+subsequent access？？
+
+mmap：将共享空间映射到某进程自己的VAS
+munmap：解除上述映射
+
+demo：父子进程的执行顺序？——没有原生机制保证顺序；
+* 为了使子进程一定能读到父进程写入shared mem的内容，需要加入一个同步的机制。后续会讲
 
 # 6.Communication in Client-Server Systems
 
