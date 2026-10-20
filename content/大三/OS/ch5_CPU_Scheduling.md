@@ -11,9 +11,17 @@ CPU utilization,CPU利用率
 
 >利用率并非越高/低越好，要看使用目标。效率or响应速度
 
+## 1.1 CPU burst和I/O burst
+
 CPU Burst和I/O burst
 * CPU burst：一堆指令连续运行，主要在使用CPU
 * I/O burst：主要在进行I/O，并没有运行指令
+
+CPU burst图例：
+
+![](image/2026-10-20-16-27-48.png)
+
+>特点：短时间内高频使用，后续长时间低频使用
 
 ![](image/2026-10-15-15-35-32.png)
 
@@ -22,22 +30,127 @@ CPU Burst和I/O burst
 由于要分配资源给不同进程的burst，所以我们需要关注burst的时长。
 * 一般burst都很短，所以scheduler要频繁运行，把资源从这个burst完的进程调度给其他进程
 
+## 1.2 抢占式/非抢占式调度
+
 考虑schedule的时机，有以下情况
-* 进程调用syscall，放弃处理器
-* 硬件发生时钟中断，当前进程被Interrupt，从running state变为waiting state
-* 进程I/O结束，由waiting-->ready state
-* 进程terminate了
+1. 进程running-->waiting(e.g.发生I/O请求)
+2. 进程running-->ready(e.g.发生中断)
+3. 进程waiting-->ready state(e.g. I/O结束)
+4. 进程terminate了
 
 其中情况1和4是必须进行调度的；2和3在有些系统上可能是不schedule的。只在1和4下调度的系统为非抢占式系统(nonpreemptive)；4种都调度的则为抢占式系统(preemptive)
+
+也就是说，非抢占式是只允许进程**主动放弃**处理器；而抢占式能让进程**被动放弃**处理器
+
+## 1.3 Dispatcher
 
 Dispatch,指派（也就是调度）
 * context switch时save state和restore state产生的延时称为dispatch latency(指派延时)
 
+![](image/2026-10-20-16-46-38.png)
+
 # 2.Scheduling Criteria
 
+>调度的衡量标准
 
+CPU utilization,CPU利用率：根据需求来，不一定高/低就一定好
+
+Throughput,吞吐率：单位时间内能完成多少processes(直接用完成的进程数➗时间)
+
+Turnaround time,周转时间：从提交一个进程到它完成的时间
+
+Waiting time,等待时间：一个进程在ready queue中等待的时间（也就是它处在ready state的时间）
+* 注意，是指在整个生命周期中在ready queue中的累计时间（中断了回到ready queue的那些时间也要算上）
+
+Response time,响应时间：从提交一个request到第一个响应出现的时间
+* 并不是到它的结果output出现的时间，那种prompt也是算的
+* 每一轮交互都会有一个自己的response time.
+
+优化方向/目标：
+* 增大CPU利用率
+* 增大吞吐率
+* 减小周转时间/等待时间/响应时间
 
 # 3.Scheduling Algorithm
+
+## 3.1 FCFS,First Come First Served
+
+先来先服务。直接按顺序服务，不管它们的属性。见下图：
+
+![](image/2026-10-20-16-59-22.png)
+
+>Gantt Chart,甘特图：常用于表示调度方式
+
+turn around time for P1=24 P2=27 P3=30 (提交时间就是一开始t=0)
+
+显然把短的放前面能减少avg waiting time,这种调度不太聪明
+
+## 3.2 SJF,Short Job First
+
+### Non-preemptive SJF
+
+![](image/2026-10-20-17-13-33.png)
+
+需要关注arrival time，是为了检测某时刻ready queue里到底有哪些进程。若只有一个那当然直接把它放上去执行，如图中的P1
+
+注意waiting time，要用开始执行时间减去arrival time
+
+### Preemptive SJF
+
+![](image/2026-10-20-17-18-45.png)
+
+t=2时，将P1和P2比较，P1还剩5时间，P2为4时间；从而直接让P2抢占处理器。
+
+>这里的抢占时机是：有进程waiting-->ready了
+
+**SJF在waiting time方面是最优调度策略(optimal)**
+
+### Determining Length of Next CPU Burst time
+
+因为SJF要根据burst time来调度，但是我们没法预知下一个burst time具体是多少。
+
+可以根据之前的Burst来估计下一个Burst time的长度。
+
+![](image/2026-10-20-17-28-06.png)
+
+![](image/2026-10-20-17-28-43.png)
+
+使用指数平均拟合出的蓝线 vs. 实际的burst time黑线
+
+## 3.3 Priority Scheduling,优先级调度
+
+每个进程有一个优先级号（整数），越小优先级越高。
+
+也可分为抢占式/非抢占式
+
+>SJF事实上是优先级调度的一个特例（将burst time作为优先级标准的版本）
+
+**Starvation(饥饿)：有些低优先级的进程可能一直执行不了。**
+解决方式：Aging(变老)——随着进程等待时间的延长，逐步提升它的优先级。这样它就有机会执行了
+
+## 3.4 RR,Round Robin(轮转算法)
+
+定义一个最小CPU时间片(time quantum)，然后让ready queue里的进程轮流占用处理器一个time quantum。（不用完也行，结束了直接terminate之后会触发调度，就接着往下轮转了）
+
+>一般平均周转时间比SJF长，但响应性更好
+
+![](image/2026-10-20-17-43-07.png)
+
+q大小的讲究？
+* q大：若q超过了最大burst time-->退化成FCFS
+* q小：context switch太频繁，overhead is too high
+
+![](image/2026-10-20-17-47-11.png)
+
+P1的waiting time = 134 - burst time of P1
+
+## 3.5 MQ,Multilevel Queue
+
+进程之间是有区别的，有些我们更关注交互性，有些我们更希望其整块执行
+
+所以可以设置多条queue，每个queue各自用一种合适的调度算法
+
+
 
 # 4.Multiple-Peocessor Scheduling
 

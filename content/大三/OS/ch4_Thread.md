@@ -120,8 +120,8 @@ fork()时，复制父进程的所有、还是仅复制调用进程？
 * 看具体情况
 
 Thread cancellation，线程取消：
-* 异步取消：立即终止
-* 同步取消：线程自己决定何时退出
+* 异步取消(Asynchronous cancellation)：立即终止
+* 同步取消(Deferred cancellation)：线程自己决定何时退出
 
 Signal Handling,信号处理：信号送给哪个线程？
 * 送给信号适用的那个线程（比如除零错误送给出错线程）。
@@ -142,6 +142,8 @@ Thread Specific Data,线程特有数据
 Scheduler Activations,调度器激活：涉及到user library
 ？？待补充
 
+Upcall:maintain the number of kernel thread
+
 Pthreads：同时是user-level和kernel-level library
 
 ## Linux Threads
@@ -155,3 +157,5 @@ Pthreads：同时是user-level和kernel-level library
 user space中各进程隔离，互相看不见；而kernel space中互相可见
 
 ？？所以这段是个啥。从15:15(time)开始看吧
+
+User space thread有两个stack，分别在User space和Kernel space中，它们存这个thread在自己空间中的上下文
