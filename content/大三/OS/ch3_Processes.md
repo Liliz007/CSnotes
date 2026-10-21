@@ -418,9 +418,9 @@ void *ptr = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 ```
 mmap 的关键参数：
 * MAP_SHARED：共享映射，多个进程看到同一块内存。
-* MAP_PRIVATE：私有映射，写时复制（copy-on-write）？？
+* MAP_PRIVATE：私有映射，写时复制（copy-on-write）
+  * copy-on-write，也就是说读时共享页面，写时才复制一份仅自己可见的副本
 {{</card>}}
-
 
 * 对于msg passing
   * 为了收发message，需要在两进程间建立communication link
@@ -470,7 +470,7 @@ Indirect:不允许zero capacity buffer，因为mailbox至少要存一条信息
 
 通过读写内存来通信，速度快，不需要kernel的介入(intervention)。kernel介入要用到system call.
 
-subsequent access？？
+>subsequent access,后续访问
 
 mmap：将共享空间映射到某进程自己的VAS
 munmap：解除上述映射
