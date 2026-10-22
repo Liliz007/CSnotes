@@ -42,12 +42,16 @@ CPU burst图例：
 
 也就是说，非抢占式是只允许进程**主动放弃**处理器；而抢占式能让进程**被动放弃**处理器
 
+速记：抢占式特有的一定要是变成ready state的。也就是ready queue来新人儿的时候
+
 ## 1.3 Dispatcher
 
 Dispatch,指派（也就是调度）
 * context switch时save state和restore state产生的延时称为dispatch latency(指派延时)
 
 ![](image/2026-10-20-16-46-38.png)
+
+切换到U-mode是为了隔离性，user code只能在U mode下运行
 
 # 2.Scheduling Criteria
 
@@ -57,7 +61,7 @@ CPU utilization,CPU利用率：根据需求来，不一定高/低就一定好
 
 Throughput,吞吐率：单位时间内能完成多少processes(直接用完成的进程数➗时间)
 
-Turnaround time,周转时间：从提交一个进程到它完成的时间
+Turnaround time,周转时间：从提交一个进程到它完成的时间（并不一定是完整的，中间被中断、切换的时间都算上）
 
 Waiting time,等待时间：一个进程在ready queue中等待的时间（也就是它处在ready state的时间）
 * 注意，是指在整个生命周期中在ready queue中的累计时间（中断了回到ready queue的那些时间也要算上）
@@ -85,6 +89,10 @@ turn around time for P1=24 P2=27 P3=30 (提交时间就是一开始t=0)
 
 显然把短的放前面能减少avg waiting time,这种调度不太聪明
 
+Convoy effect(护航效应)：一个CPU-bound进程和n个I/O-bound进程，那个CPU time长的进程P1运行时其他进程就是在ready queue里面挂着；
+
+且由于那些是I/O-bound，它们使用CPU的时间很短，然后就去I/O了，完成后又在ready queue里面等。不再次分配到CPU的话它们I/O也做不了，这样I/O设备就空闲着，利用率很低
+
 ## 3.2 SJF,Short Job First
 
 ### Non-preemptive SJF
@@ -95,7 +103,9 @@ turn around time for P1=24 P2=27 P3=30 (提交时间就是一开始t=0)
 
 注意waiting time，要用开始执行时间减去arrival time
 
-### Preemptive SJF
+### Preemptive SJF，又叫SRTF
+
+SRTF,shortest remaining time first
 
 ![](image/2026-10-20-17-18-45.png)
 
@@ -144,19 +154,48 @@ q大小的讲究？
 
 P1的waiting time = 134 - burst time of P1
 
-## 3.5 MQ,Multilevel Queue
+## 3.5 Multilevel Queue
 
 进程之间是有区别的，有些我们更关注交互性，有些我们更希望其整块执行
 
-所以可以设置多条queue，每个queue各自用一种合适的调度算法
+所以可以把ready queue分成多条queue，每个queue各自用一种合适的调度算法
 
+![](image/2026-10-22-14-41-18.png)
 
+会优先执行优先级高的queue。然后每个queue内部又有自己的调度算法（当然，应该确保每个进程都能得到服务）
+
+### Multilevel Feedback Queue
+
+![](image/2026-10-22-14-56-09.png)
+
+一进程P1，若在q=8的一个q中未完成，就把它降级到q=16的queue（也就是说它的交互性没那么强），最后来到底层的纯粹计算型的FCFS，给其分配更多的CPU时间
+
+若下层队列中有进程对交互性要求较高，也可以将其升级到上方的RR调度
 
 # 4.Multiple-Peocessor Scheduling
 
-# 5.Real-Time Scheduling
+## SMP 和 AMP
 
-# 6.Thread Scheduling
+Asymmetric Multiprocessing,非对称多处理：把跟kernel相关的操作只交给一个core，其他的core只跑User code
+
+SMP,Symmetric Multiprocessing:对称多处理
+
+对应的，对称多处理就是可以多个core一起运行kernel code 或 user code.由于此时要处理并行访问kernel内容的问题，会比非对称的复杂
+
+## Real-time Scheduling
+
+Hard real-time system，硬实时操作系统：能在一个规定时间内完成工作的系统（不一定要很快，不timeout就行）
+* 若timeout了呢？——系统故障了，需要检修
+
+Soft real-time system，软实时操作系统：不一定能在要求时间内完成。它只能保证比较关键的进程能分配到更高的优先级
+
+## Thread Scheduling
+
+在linux中，线程就是进程，前面那些方法都适用
+
+调度在哪个层面上完成？——user-level调度 vs. kernel-level调度
+* user-level：本地调度。在一个进程内部线程争用CPU
+* kernel-level：使用one-to-one model，那就是在kernel level下的全局调度
 
 # 7.OS eg
 
