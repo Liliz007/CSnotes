@@ -71,13 +71,13 @@ compile和load-time binding不对这俩地址进行区分，因为CPU和memory u
 
 对一个库函数地址的链接可以推迟到exe time.从而exe time才确定函数的真实地址
 
-桩函数stub：（假设它锚定的是printf()）OS提供的一个入口，可以把它嵌在主程序中，链接时链的是桩函数。运行中第一次调用对应的函数时桩会起作用，将printf()的库load进来。接着printf()的地址会代替stub那个占位假地址
+桩函数stub：（假设它锚定的是`printf()`）OS提供的一个入口，可以把它嵌在主程序中，链接时链的是桩函数。运行中第一次调用对应的函数时桩会起作用，将`printf()`的库load进来。接着`printf()`的地址会代替stub那个占位假地址
 
-被这样链接过来的库称为动态库/共享库（？？）
+被这样链接过来的库称为动态库/共享库(shared library)
 
 动态链接的优点：
 * 减小了exe文件的大小
-* 减少了load时所用的内存空间（？？）
+* 减少了load时所用的内存空间（link是在load time进行的）
 * 系统升级时，由于stub的存在，不用把新升级的library再链接一遍（app更新后不会不能用）
 
 ## Contiguous Allocation
@@ -99,13 +99,15 @@ compile和load-time binding不对这俩地址进行区分，因为CPU和memory u
 
 ## Fragmentation，碎片化
 
-External Fragmentation(外部碎片)：分散的小空洞，可能总空间很大，但还是用不上。
+**External Fragmentation(外部碎片)：** 分散的小空洞，可能总空间很大，但还是用不上。
 
-Internal Fragmentation(内部碎片)：OS可能给进程分配比所需的更大的空间，由于永远都用不上，所以会浪费掉。这是进程内部的浪费。
+**Internal Fragmentation(内部碎片)：** OS可能给进程分配比所需的更大的空间，由于永远都用不上，所以会浪费掉。这是进程内部的浪费。
 
-解决外部碎片：
+**解决外部碎片：**
 1. 尝试把空洞连起来——compaction,内存压缩。把进程连到一起。此时要用MMU移动进程的地址空间（这样会导致进程block住）
-2. 使用non-contiguous的allocation
+   1. 限制：这种方法只能用于exe-time dynamic relocation（这种进程才允许在执行中移动）
+   2. 如果进程正在I/O：进程可能在访问disk（DMA，Direct Memory Access），DMA的过程中CPU没有参与。如果此时disk传回数据，就不知道该传到哪了（进程已经被移走了）
+2. 使用non-contiguous的allocation：
 
 # 2. Swapping
 
