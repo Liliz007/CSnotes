@@ -197,6 +197,59 @@ Soft real-time system，软实时操作系统：不一定能在要求时间内�
 * user-level：本地调度。在一个进程内部线程争用CPU
 * kernel-level：使用one-to-one model，那就是在kernel level下的全局调度
 
-# 7.OS eg
+# 课堂测验讲评
 
-# 8.Algorithm Evaluation
+{{<card title="调度问题">}}
+
+![](image/2026-10-29-14-46-15.png)
+
+4.A  5.A
+
+![](image/2026-10-29-14-41-45.png)
+
+6. 画一下ready queue.在t=4时刻，刚刚换下的p2要在新加入的p3之后。因此正确的调度顺序应为：
+
+>P1 P2 P1 P3 P2 P4 P5 P2 P4. 答案为选项D
+
+一个简化的例子：
+
+-|Arrival|burst
+-|-|-
+P1|0|4
+P2|2|3
+
+为了维护RR的自洽性，ready-queue中新加入的进程要放在刚换下的进程之前
+
+{{</card>}}
+
+{{<card title="优先级问题">}}
+
+![](image/2026-10-29-15-10-10.png)
+
+这里priority指的是CPU调度的优先级。让I/O-bound进程优先级高，因为它只需要用一点点CPU就会去I/O了；反之，I/O-bound进程就得一直护航CPU-bound进程，I/O设备闲置，整个系统的utilization就不高
+
+>简单理解：交互性强的肯定要优先级高，不然体验感拉完了
+
+{{</card>}}
+
+{{<card title="multithreading">}}
+
+![](image/2026-10-29-15-14-35.png)
+
+A) 考虑多线程的好处，然后反其道行之：好处是并行性好。那么反例就是步骤间依赖性强的、难以并发的task（如shell程序）
+
+B) 当前线程发生Block时，one-to-one中可调度其他线程继续跑
+
+{{</card>}}
+
+{{<card title="multilevel feedback queue">}}
+
+![](image/2026-10-29-15-19-56.png)
+* demote：降级
+* neutralize：
+
+Priority is strictly preemptive across levels：只要Q0有task，下面的就运行不了
+
+（1）在时间片完结之前进行一个空写操作
+（2）可以统计一个进程在Q0内总计花费的时间（无论它I/O与否），如果超出10ms就把它降级。降级之后本级的计时器清零
+{{</card>}}

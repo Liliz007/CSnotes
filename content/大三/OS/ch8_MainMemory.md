@@ -3,7 +3,7 @@ title: 第八章 · Main Memory
 weight: 7
 ---
 
-# 1. Background
+# 1. Address & Binding
 
 Processing-in-Memory？？
 
@@ -80,7 +80,7 @@ compile和load-time binding不对这俩地址进行区分，因为CPU和memory u
 * 减少了load时所用的内存空间（link是在load time进行的）
 * 系统升级时，由于stub的存在，不用把新升级的library再链接一遍（app更新后不会不能用）
 
-## Contiguous Allocation
+# 2.Contiguous Memory Allocation
 
 >Contiguous:空间上的相邻、连续
 
@@ -103,19 +103,48 @@ compile和load-time binding不对这俩地址进行区分，因为CPU和memory u
 
 **Internal Fragmentation(内部碎片)：** OS可能给进程分配比所需的更大的空间，由于永远都用不上，所以会浪费掉。这是进程内部的浪费。
 
+>也就是说，外部碎片是unallocated的，内部碎片是allocated但unused的
+
 **解决外部碎片：**
 1. 尝试把空洞连起来——compaction,内存压缩。把进程连到一起。此时要用MMU移动进程的地址空间（这样会导致进程block住）
    1. 限制：这种方法只能用于exe-time dynamic relocation（这种进程才允许在执行中移动）
-   2. 如果进程正在I/O：进程可能在访问disk（DMA，Direct Memory Access），DMA的过程中CPU没有参与。如果此时disk传回数据，就不知道该传到哪了（进程已经被移走了）
+   2. 如果进程正在I/O：进程可能在访问disk（DMA，Direct Memory Access），DMA的过程中CPU没有参与。如果此时disk传回数据，就不知道该传到哪了（进程已经被移走了）。为了解决这个问题，应该把I/O中的task锁住
 2. 使用non-contiguous的allocation：
 
-# 2. Swapping
+# 3. Paging
 
-# 3.Contiguous Memory Allocation
+>一种 Non-contiguous memory allocation. 并且是exe-time binding的
 
-# 4. Paging
+![](image/2026-10-29-15-31-24.png)
 
-# 5. Structure of the Page Table
+## Paging Hardware
+
+CPU的address格式：
+
+![](image/2026-10-29-15-36-33.png)
+
+Hardware：
+
+![](image/2026-10-29-15-35-08.png)
+
+* pagetable entry : [page number-->frame number]
+* 整个进程的VA size = pagetable entry数 * page size
+* context switch时，page table register也要换。从而不同进程的页表是隔离的
+
+Page table放在main memory中。维护两个重要reg：
+* Page-table base reg(PTBR)
+  * satp存了page table的物理地址
+* Page-table length reg(PTLR)
+
+为了拿到mem中的data/inst，要访两次mem：一次访问page table，一次取回data/inst
+
+为了省掉额外的访存，设计一个Page table的cache——TLB
+
+## Free Frame Management
+
+维护一个free-frame list
+
+![](image/2026-10-29-15-44-53.png)
 
 # 6. Segmentation
 
