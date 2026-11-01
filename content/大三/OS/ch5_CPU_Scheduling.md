@@ -57,7 +57,7 @@ Dispatch,指派（也就是调度）
 
 >调度的衡量标准
 
-CPU utilization,CPU利用率：根据需求来，不一定高/低就一定好
+CPU utilization,CPU利用率= CPU运行时间/程序运行总时间（根据需求来，不一定高/低就一定好。）
 
 Throughput,吞吐率：单位时间内能完成多少processes(直接用完成的进程数➗时间)
 
@@ -74,6 +74,11 @@ Response time,响应时间：从提交一个request到第一个响应出现的�
 * 增大CPU利用率
 * 增大吞吐率
 * 减小周转时间/等待时间/响应时间
+
+{{<card title = "改善分时系统响应时间、CPU利用率from王大鹏">}}
+1. 采用优先级+非抢占式调度：既可使重要任务通过高优先级尽早获得响应，又可保证次要作业不会总被抢占而出现starving
+2. 并不是进程越多CPU利用率越高，因为进程多了竞争激烈，甚至可能出现死锁
+{{</card>}}
 
 # 3.Scheduling Algorithm
 

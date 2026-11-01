@@ -31,6 +31,15 @@ weight: 3
 * 错误既可能在硬件层面（CPU、内存、I/O 设备）发生，也可能在软件层面发生
 * 解决方法：纠正或终止，有时会返回一个错误码 (error code)
 
+{{<card title = "用户接口from王道">}}
+分为两类：命令接口和程序接口
+1. 命令接口：就是用命令行写操作命令
+   1. 联机控制（交互式）
+   2. 脱机控制（批处理）
+2. 程序接口：：由一组系统调用组成。用户用这些系统调用来请求外部设备、管理内存等服务
+
+{{</card>}}
+
 ## 面向系统本身
 
 for ensuring the efficient operation of the system itself via resource sharing
@@ -44,13 +53,7 @@ for ensuring the efficient operation of the system itself via resource sharing
 * 保护：当多个进程并发运行时，进程间不得相互干扰，这就要确保所有对系统资源的访问是受控的
 * 安全：要求用户验证身份
 
-# 2. User OS Interface
-
-CLI
-
-GUI
-
-# 3. System Calls
+# 2. System Calls，系统调用
 
 def:调用OS服务的一种接口，也是user请求kernel服务的唯一合法入口。
 
@@ -230,6 +233,10 @@ unikernel（云服务）:LibOS
 ![](../image/2026-09-20-17-38-32.png)
 
 虚拟机：可以在一台物理机的hardware的基础上创建多台虚拟的计算机，从而运行他们各自的kernel和process
+
+{{<card title="虚拟机from王道">}}
+没有任何软件至此的计算机称为裸机；覆盖了软件的机器称为扩充机器或虚拟机
+{{</card>}}
 
 ## Hypervisor(虚拟机管理器)
 

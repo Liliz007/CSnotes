@@ -21,16 +21,25 @@ main parts
 
 ## 1.1 什么是操作系统
 
-OS的目标：执行用户程序并优化问题处理。
-
-计算机系统的构成：硬件，OS，系统程序和应用程序，user
+计算机系统的构成：硬件，OS，系统程序和应用程序，user program(见下图)
 ![](../image/2026-09-15-17-13-43.png)
 
-OS是resource allocator和control program.
+OS是resource allocator和control program.也就是说，OS是控制和管理整个计算机系统的软硬件资源，合理组织和调度计算机的工作和资源分配，从而给用户和其他软件提供方便的接口与功能的**程序集合**
 
 OS又叫**kernel**，是指电脑开机后始终运行的那个program.其他program要么是sys program，要么是application program.（通常直接叫kernel了）
 
 功能/特点：abstraction,isolation,sharing
+
+OS的两大基本特征：并发和共享。两者互为存在条件
+* 若不允许并发，就无需共享
+* 若不支持共享，就无法并发
+* 还有虚拟、异步这俩特征。但最基本、一定要实现的是并发和共享。
+  * 早期批处理中，OS会将全部task调入mem中，然后多程序并发。此时不需要虚拟存储管理也可以实现。
+
+OS的基本类型主要有：
+1. 批处理（脱机）
+2. 分时（使用时间片，可多用户，可交互，也有及时性）
+3. 实时（不用时间片排队，在规定时间内响应）
 
 ## 1.2 computer startup
 
