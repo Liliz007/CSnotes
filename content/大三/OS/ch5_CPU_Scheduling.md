@@ -75,10 +75,10 @@ Response time,响应时间：从提交一个request到第一个响应出现的�
 * 增大吞吐率
 * 减小周转时间/等待时间/响应时间
 
-{{<card title = "改善分时系统响应时间、CPU利用率from王大鹏">}}
+{{<collapse summary = "改善分时系统响应时间、CPU利用率from王大鹏">}}
 1. 采用优先级+非抢占式调度：既可使重要任务通过高优先级尽早获得响应，又可保证次要作业不会总被抢占而出现starving
 2. 并不是进程越多CPU利用率越高，因为进程多了竞争激烈，甚至可能出现死锁
-{{</card>}}
+{{</collapse>}}
 
 # 3.Scheduling Algorithm
 
@@ -204,7 +204,7 @@ Soft real-time system，软实时操作系统：不一定能在要求时间内�
 
 # 课堂测验讲评
 
-{{<card title="调度问题">}}
+{{<collapse summary="调度问题">}}
 
 ![](image/2026-10-29-14-46-15.png)
 
@@ -225,9 +225,9 @@ P2|2|3
 
 为了维护RR的自洽性，ready-queue中新加入的进程要放在刚换下的进程之前
 
-{{</card>}}
+{{</collapse>}}
 
-{{<card title="优先级问题">}}
+{{<collapse summary="优先级问题">}}
 
 ![](image/2026-10-29-15-10-10.png)
 
@@ -235,9 +235,9 @@ P2|2|3
 
 >简单理解：交互性强的肯定要优先级高，不然体验感拉完了
 
-{{</card>}}
+{{</collapse>}}
 
-{{<card title="multithreading">}}
+{{<collapse summary="multithreading">}}
 
 ![](image/2026-10-29-15-14-35.png)
 
@@ -245,9 +245,9 @@ A) 考虑多线程的好处，然后反其道行之：好处是并行性好。�
 
 B) 当前线程发生Block时，one-to-one中可调度其他线程继续跑
 
-{{</card>}}
+{{</collapse>}}
 
-{{<card title="multilevel feedback queue">}}
+{{<collapse summary="multilevel feedback queue">}}
 
 ![](image/2026-10-29-15-19-56.png)
 * demote：降级
@@ -257,4 +257,4 @@ Priority is strictly preemptive across levels：只要Q0有task，下面的就�
 
 （1）在时间片完结之前进行一个空写操作
 （2）可以统计一个进程在Q0内总计花费的时间（无论它I/O与否），如果超出10ms就把它降级。降级之后本级的计时器清零
-{{</card>}}
+{{</collapse>}}

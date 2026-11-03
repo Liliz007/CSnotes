@@ -38,7 +38,7 @@ process in memory belike:
 * library mappings：
   * 动态链接器将用到的库从disk中load进进程的VAS，并用`mmap`映射到某段地址。
 
-{{<card>}}
+{{<collapse>}}
 quiz解析
 Q4
 * VAS是分配给进程的，而非线程。也就是说，同一进程内的所有线程共用一块内存
@@ -49,7 +49,7 @@ Q6 为何收到I/O请求之后不能直接进ready，而要先waiting?
 * 因为在等待同步的I/O操作完成。而相对于处理器来说，I/O很慢
 * 若先进入ready queue中并且被scheduler选中了，就跑不了
 * 会在wait-queue中等待
-{{</card>}}
+{{</collapse>}}
 
 
 ## 补充：kernel code 的两种执行上下文
@@ -211,13 +211,13 @@ medium-term|swap in / swap out|恢复/挂起
 
 CPU burst：一次连续纯计算的时间段。对于CPU-bound，CPU burst很长；另一个则很短
 
-{{<card>}}
+{{<collapse>}}
 想提升CPU利用率，如何搭配不同类型的进程？
 * 希望context switch的overhead(开销)能小一些。也就是说，要提高context switch的速率
 * 由于CPU除saving/loading states之外没有执行对用户有帮助的work，所以这块被看作是纯overhead
 * overhead:没用但无法避免的开销
 * quiz补充：context switch并不会使中断的进程的PCB被永久deallocate from main memory。但是内存不够用时medium-term scheduler会把未完成的进程swap out到disk中
-{{</card>}}
+{{</collapse>}}
 
 # 3.Operations on Processes
 
@@ -267,12 +267,12 @@ demo:运行外部进程，不再执行child原来的代码：
 * 调用外部程序，会把当前进程的上下文(VAS,Virtual Address Space)覆盖掉。从而child就不执行了
 * 孤儿进程：父进程结束后子进程的父亲会变成进程1，也就是parent_process_id变成1
 
-{{<card>}}
+{{<collapse>}}
 ![](image/2026-09-30-14-48-16.png)
 * UNIX中，fork()后，使用exec()可以用新程序替换掉当前进程的内存空间。从而直接开始运行新程序了
 * fork()搭配exec()的用途：让子进程运行外部程序（不这么做的话，子进程就跟父进程一模一样，是duplicate的）
 * 但进行exec()之后，这个进程的pid也不会变；所以依然保持着与父进程的父子关系和调度关系
-{{</card>}}
+{{</collapse>}}
 
 创建进程后，有两种运行模式：
 * 父子同时运行：若父亲先结束，儿子就直接成孤儿
@@ -377,7 +377,7 @@ in|out|buffer
 
 >进一步，引入count参数：表示buffer中元素数量。有潜在问题（同步）
 
-{{<card>}}
+{{<collapse>}}
 linux中的pipes(管道)：
 ```bash
 processA | processB  #A会作为信息的生产者，其输出的信息会流通到B
@@ -390,7 +390,7 @@ grep "Sales" employee.csv | cut -d',' -f2,4 | sort -t','
 #把匹配的含Sales行数据交给cut，cut选出第2和4列交给sort
 #在大规模数据中，cut不用等grep全处理完，选出来就直接往后流。是streamly的
 ```
-{{</card>}}
+{{</collapse>}}
 
 # 5.IPC,Interprocess Communication
 
@@ -403,7 +403,7 @@ grep "Sales" employee.csv | cut -d',' -f2,4 | sort -t','
   * shared memory速度比message passing快。因为后者还要进行memory copy(读和写的时候都要)
   * mem mapping:进程共享同一块物理内存，但每个进程有自己的私有虚拟地址空间VAS。所以要通过页表映射，把这块物理内存同时映射进两个进程的VAS
 
-{{<card>}}
+{{<collapse>}}
 ```bash
 // 进程 A
 int fd = shm_open("/my_shm", O_CREAT | O_RDWR, 0666);
@@ -420,7 +420,7 @@ mmap 的关键参数：
 * MAP_SHARED：共享映射，多个进程看到同一块内存。
 * MAP_PRIVATE：私有映射，写时复制（copy-on-write）
   * copy-on-write，也就是说读时共享页面，写时才复制一份仅自己可见的副本
-{{</card>}}
+{{</collapse>}}
 
 * 对于msg passing
   * 为了收发message，需要在两进程间建立communication link
