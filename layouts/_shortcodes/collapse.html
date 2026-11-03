@@ -1,0 +1,5 @@
+{{- $summary := .Get "summary" | default "展开内容" -}}
+<details class="book-collapse">
+  <summary>{{ $summary }}</summary>
+  <div class="book-collapse-content">{{ .Inner | .Page.RenderString }}</div>
+</details>

@@ -206,3 +206,24 @@ samp {
   font-size: 1.05rem;
   margin-bottom: 0.5rem;
 }
+.book-collapse {
+  border: 1px solid var(--gray-200);
+  border-radius: 0.5rem;
+  background: var(--gray-100);
+  margin: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.book-collapse > summary {
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.book-collapse-content {
+  padding: 0 1.25rem 1rem;
+}
+.book-collapse-content > :first-child {
+  margin-top: 0;
+}
+.book-collapse-content > :last-child {
+  margin-bottom: 0;
+}
