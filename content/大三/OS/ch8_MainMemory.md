@@ -113,11 +113,12 @@ compile和load-time binding不对这俩地址进行区分，因为CPU和memory u
 
 # 3. Paging
 
->一种 Non-contiguous memory allocation. 并且是exe-time binding的
+>一种 Non-contiguous memory allocation. 并且是exe-time binding的。可消除外部碎片。
+>但是无法消除内部碎片（当进程所需空间并非page size的整数倍时，最后一个page就可能用不完）
 
 ![](image/2026-10-29-15-31-24.png)
 
-## Paging Hardware
+## 3.1 Paging Hardware
 
 CPU的address格式：
 
@@ -140,12 +141,154 @@ Page table放在main memory中。维护两个重要reg：
 
 为了省掉额外的访存，设计一个Page table的cache——TLB
 
+## 3.2 TLB
+
+把常用的页表项(PTE) cache到TLB中。（访问TLB这个cache比访存快多了）
+
+TLB项：{Page Number(key), Frame Number(value)}
+
+可以实现parallel key search？？
+
+{{<collapse summary = "Paging with TLB">}}
+![](image/2026-11-03-16-41-09.png)
+{{</collapse>}}
+
+ASID，用于在TLB中区分不同进程的页表项
+
+### Effective Access Time(EAT)
+
+设命中率为α，访问TLB开销为ε，访存一次开销为1
+
+命中时访存（data或inst）用时为 (1+ε)；miss时用时为 (ε+1+1)
+
+从而有如下公式
+
+![](image/2026-11-03-16-46-11.png)
+
+$$
+EAT = (1+ε)\alpha + (ε+1+1)(1-\alpha)
+$$
+
+这个结果是比较接近1的，由于访存的局部性，α其实还蛮高的
+
 ## Free Frame Management
 
 维护一个free-frame list
 
 ![](image/2026-10-29-15-44-53.png)
 
-# 6. Segmentation
+## 3.3 Memory Protection
+
+因为可能进程不需要page table那么多页，有些PTE是无用的。我们增加一个valid bit，表示当前这个page是否在当前进程的逻辑地址空间中。
+
+{{<collapse summary = "RISC-V中的PTE">}}
+![](image/2026-11-03-16-54-34.png)
+* PPN其实就是frame number
+* sv39中，逻辑地址是39bits，VPN是27bits（何意味？？怎么比PPN短那么多）
+{{</collapse>}}
+
+## 3.4 Shared Pages
+
+shared code：只读的代码可以进程间共享
+
+>为什么shared code被映射到的逻辑地址也要相同？——为了保证jump指令跳转地址正确。
+>相应的，如果代码中不允许出现绝对地址，只能由可重定位的地址，就没有上方那种约束了。（这样的代码称为position independent code）
+
+![](image/2026-11-03-17-01-40.png)
+
+* 上图中，frame346是code。
+
+## 3.5 Structure of PageTable
+
+### Hierarchical Paging，分层页表
+
+* 如果地址太长，页表本身太大无法容纳在一页内，就需要对页表进行分页
+* 用一个外层页表来管理这堆子页表（内层页表）
+
+外层页表的PTE：{Page Number,Frame Number}
+* 此处的Frame Number存的是子页表的PPN
+
+这里就需要对CPU逻辑地址进行一个改造：
+
+{{<collapse summary = "地址转换">}}
+![](image/2026-11-03-17-15-59.png)
+
+![](image/2026-11-03-17-16-07.png)
+
+* P1和P2分别为在页表中的页号（key）
+{{</collapse>}}
+
+优点：
+* 减小了页表所用内存空间。因为页号范围减小，页表所需装的PTE个数也小了
+
+### Hashed Page Tables
+
+> hash function的特点：可以把很大的空间映射到一个固定、有限的空间中。若发生hash碰撞，就把新值链到已有值之后
+
+把VPN hash到一个hash table中。一般碰撞次数不会太多，hash过去之后顺着链表查找一下，代价也是能接受的。
+
+{{<collapse summary = "图示">}}
+![](image/2026-11-03-17-29-06.png)
+{{</collapse>}}
+
+同样，设置一个TLB以避免hash要访两次存的麻烦。
+
+### Inverted Page Table
+
+在整个mem中只有一个页表。其entry为：{pid,VPN}
+* pid是进程号
+* VPN是对应页号
+
+![](image/2026-11-03-17-31-58.png)
+
+* 是先根据PTE找到项，再得到所需项相对表头偏移i（这个i就是内存中的frame number，就可以直接去取出frame了）
+* 但是遍历page table的开销很大，所以并不是一个很好的办法
+
+## 3.6 Swapping，换入换出
+
+>说的是切换进程时，要将进程从mem中换出到外存中
+
+![](image/2026-11-03-17-38-27.png)
+
+有了paging机制后，可以只换出一部分page
+
+![](image/2026-11-03-17-38-45.png)
+
+# 6. Segmentation，分段式管理
+
+段：指的是如stack,function,main program等实体单位
+
+![](image/2026-11-03-17-43-25.png)
+* 注意这个length表示的是段的个数
+
+![](image/2026-11-03-17-46-30.png)
+
+优点：
+* 与程序员视图对应得很好
+
+## 段页式管理
+
+Pentium的先段后页式管理：
+
+![](image/2026-11-03-17-50-01.png)
+
+* 先段，对程序员视图友好
+* 后页，方便管理物理内存，防止出现内部碎片
 
 # 7. eg:The Intel Pentium
+
+# 讲评
+
+## Q1
+
+![](image/2026-11-03-16-26-26.png)
+
+低两位是page offset。题目说对应到frame 1，那么就是00110
+
+## Q2
+
+![](image/2026-11-03-16-35-03.png)
+
+十进制地址43，一个Page 8B，43/8=5，从而在Page5，偏移量为3
+
+对应Frame3，偏移量为3，则物理地址为3*8+3=27
