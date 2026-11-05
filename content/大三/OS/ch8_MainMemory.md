@@ -153,7 +153,7 @@ TLB项：{Page Number(key), Frame Number(value)}
 ![](image/2026-11-03-16-41-09.png)
 {{</collapse>}}
 
-ASID，用于在TLB中区分不同进程的页表项
+ASID(Addr Space ID)，用于在TLB中区分不同进程的页表项
 
 ### Effective Access Time(EAT)
 
@@ -191,7 +191,7 @@ $$
 
 shared code：只读的代码可以进程间共享
 
->为什么shared code被映射到的逻辑地址也要相同？——为了保证jump指令跳转地址正确。
+>为什么shared code被映射到的逻辑地址也要相同？——为了保证jump指令跳转地址正确。jump中出现的只会是逻辑地址（CPU能看到的地址）
 >相应的，如果代码中不允许出现绝对地址，只能由可重定位的地址，就没有上方那种约束了。（这样的代码称为position independent code）
 
 ![](image/2026-11-03-17-01-40.png)
@@ -260,6 +260,8 @@ shared code：只读的代码可以进程间共享
 
 ![](image/2026-11-03-17-43-25.png)
 * 注意这个length表示的是段的个数
+* STLR=4时，实际上的段号是0123.
+* 同样的，limit为x时，实际上的可用空间是0-(x-1)
 
 ![](image/2026-11-03-17-46-30.png)
 
@@ -268,16 +270,21 @@ shared code：只读的代码可以进程间共享
 
 ## 段页式管理
 
-Pentium的先段后页式管理：
+Pentium（奔腾）的段页式管理：
 
 ![](image/2026-11-03-17-50-01.png)
 
-* 先段，对程序员视图友好
+* 先段，对程序员视图友好，可以实现细粒度的属性/权限划分
 * 后页，方便管理物理内存，防止出现内部碎片
 
-# 7. eg:The Intel Pentium
+logical addr的首字段被定义为selector，包含三个字段
+* Segment：段号
+* GDT：表示这个段是系统的还是进程私有的
+* Protection：权限等
 
-# 讲评
+
+
+# 7. quiz讲评
 
 ## Q1
 
@@ -292,3 +299,13 @@ Pentium的先段后页式管理：
 十进制地址43，一个Page 8B，43/8=5，从而在Page5，偏移量为3
 
 对应Frame3，偏移量为3，则物理地址为3*8+3=27
+
+## Q3
+
+
+## Q4
+
+Inverted Page Table就是把所有的frame都存到一个页表中。由logical addr中的pid在PT中搜寻，然后得到i。
+
+所以页表项数就是物理frame数。
+
