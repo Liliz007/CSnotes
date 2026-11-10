@@ -192,6 +192,121 @@ samp {
   margin-bottom: 2.25rem;
 }
 
+/* ---------- 首页可折叠学习目录 ---------- */
+.book-layout-landing .directory {
+  max-width: 46rem;
+  margin: 4rem auto 2rem;
+  padding: 1.75rem 2rem;
+  text-align: left;
+  border: 1px solid var(--gray-200);
+  border-radius: 1rem;
+  background: var(--gray-100);
+  box-shadow: 0 8px 28px rgba(89, 61, 110, 0.08);
+  scroll-margin-top: 2rem;
+}
+
+.directory h2 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 1.65rem;
+}
+
+.directory-description {
+  margin: 0.4rem 0 1.25rem;
+  color: var(--gray-500);
+}
+
+.directory-tree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 1.25rem;
+}
+
+.directory-tree > ul {
+  padding-left: 0;
+}
+
+.directory-tree li {
+  position: relative;
+  margin: 0.25rem 0;
+}
+
+.directory-tree li > ul {
+  margin-left: 0.55rem;
+  border-left: 1px solid var(--gray-200);
+}
+
+.directory-node > summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 2.6rem;
+  padding: 0.45rem 0.75rem 0.45rem 2rem;
+  border-radius: 0.55rem;
+  color: var(--body-font-color);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.directory-node > summary::-webkit-details-marker {
+  display: none;
+}
+
+.directory-node > summary::before {
+  position: absolute;
+  left: 0.65rem;
+  content: "+";
+  color: var(--color-link);
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.directory-node[open] > summary::before {
+  content: "−";
+}
+
+.directory-node > summary:hover,
+.directory-page:hover,
+.directory-index:hover {
+  color: var(--color-link);
+  background: rgba(139, 95, 168, 0.08);
+  text-decoration: none;
+}
+
+.directory-children {
+  padding: 0.15rem 0 0.35rem;
+}
+
+.directory-index,
+.directory-page {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+}
+
+.directory-index {
+  margin: 0.2rem 0 0.25rem 0.55rem;
+  color: var(--gray-500);
+  font-size: 0.9rem;
+}
+
+.directory-page {
+  color: var(--body-font-color);
+}
+
+@media (max-width: 40rem) {
+  .book-layout-landing .directory {
+    margin: 3rem 0.25rem 1rem;
+    padding: 1.25rem 1rem;
+  }
+}
+
 /* ---------- 卡片 ---------- */
 .book-card {
   border: 1px solid var(--gray-200);

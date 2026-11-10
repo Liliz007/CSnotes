@@ -8,4 +8,6 @@ layout: landing
 
 Stay hungry, stay foolish.
 
-{{<button href="/大二/">}}开始阅读 →{{</button>}}
+{{<button href="#directory">}}开始阅读 →{{</button>}}
+
+{{< directory >}}

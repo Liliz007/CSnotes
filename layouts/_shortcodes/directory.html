@@ -1,0 +1,13 @@
+<section id="directory" class="directory">
+  <h2>学习目录</h2>
+  <p class="directory-description">展开年级和课程，选择想阅读的笔记。</p>
+  <div class="directory-tree">
+    <ul>
+      {{ range .Site.Home.Sections.ByWeight }}
+        {{ if ne .Params.bookHidden true }}
+          <li>{{ partial "directory-node.html" . }}</li>
+        {{ end }}
+      {{ end }}
+    </ul>
+  </div>
+</section>

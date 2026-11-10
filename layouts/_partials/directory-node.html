@@ -1,0 +1,18 @@
+{{- $page := . -}}
+{{- if $page.IsSection -}}
+  <details class="directory-node">
+    <summary>{{ $page.LinkTitle }}</summary>
+    <div class="directory-children">
+      {{- if $page.Content }}
+        <a class="directory-index" href="{{ $page.RelPermalink }}">查看{{ $page.LinkTitle }}分区</a>
+      {{- end }}
+      <ul>
+        {{- range (where $page.Pages "Params.bookHidden" "ne" true).ByWeight }}
+          <li>{{ partial "directory-node.html" . }}</li>
+        {{- end }}
+      </ul>
+    </div>
+  </details>
+{{- else if and $page.IsPage $page.Content -}}
+  <a class="directory-page" href="{{ $page.RelPermalink }}">{{ $page.LinkTitle }}</a>
+{{- end -}}
