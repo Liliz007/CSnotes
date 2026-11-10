@@ -52,7 +52,7 @@ Concurrency vs. Parallelism
 
 ## 1.1 User Threads,用户线程
 
-由U模式线程库(thread library)管理多线程。OS不知道多线程的事.若发生I/O中断，OS会把整个进程block住，从而所有线程都不能运行
+由U模式线程库(thread library)管理+调度线程。OS不知道多线程的事.若发生I/O中断，OS会把整个进程block住，从而所有线程都不能运行
 
 >Linux中调用pthread_create，Kernel其实是能看到多个线程的
 
