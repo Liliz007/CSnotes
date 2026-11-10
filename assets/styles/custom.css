@@ -192,8 +192,8 @@ samp {
   margin-bottom: 2.25rem;
 }
 
-/* ---------- 首页可折叠学习目录 ---------- */
-.book-layout-landing .directory {
+/* ---------- 可折叠学习目录 ---------- */
+.directory {
   max-width: 46rem;
   margin: 4rem auto 2rem;
   padding: 1.75rem 2rem;
@@ -202,19 +202,18 @@ samp {
   border-radius: 1rem;
   background: var(--gray-100);
   box-shadow: 0 8px 28px rgba(89, 61, 110, 0.08);
-  scroll-margin-top: 2rem;
 }
 
-.directory h2 {
+.directory-title {
   margin: 0;
   padding: 0;
   border: 0;
-  font-size: 1.65rem;
-}
-
-.directory-description {
-  margin: 0.4rem 0 1.25rem;
-  color: var(--gray-500);
+  font-family: "Segoe Script", "Brush Script MT", "Snell Roundhand",
+    "Apple Chancery", "Lucida Handwriting", cursive;
+  font-size: 2.4rem;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 1.25rem;
 }
 
 .directory-tree ul {
@@ -269,8 +268,7 @@ samp {
 }
 
 .directory-node > summary:hover,
-.directory-page:hover,
-.directory-index:hover {
+.directory-page:hover {
   color: var(--color-link);
   background: rgba(139, 95, 168, 0.08);
   text-decoration: none;
@@ -280,7 +278,6 @@ samp {
   padding: 0.15rem 0 0.35rem;
 }
 
-.directory-index,
 .directory-page {
   display: inline-flex;
   align-items: center;
@@ -290,18 +287,12 @@ samp {
   text-decoration: none;
 }
 
-.directory-index {
-  margin: 0.2rem 0 0.25rem 0.55rem;
-  color: var(--gray-500);
-  font-size: 0.9rem;
-}
-
 .directory-page {
   color: var(--body-font-color);
 }
 
 @media (max-width: 40rem) {
-  .book-layout-landing .directory {
+  .directory {
     margin: 3rem 0.25rem 1rem;
     padding: 1.25rem 1rem;
   }

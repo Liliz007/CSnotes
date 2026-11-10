@@ -8,6 +8,4 @@ layout: landing
 
 Stay hungry, stay foolish.
 
-{{<button href="#directory">}}开始阅读 →{{</button>}}
-
-{{< directory >}}
+{{<button href="/directory/">}}开始阅读 →{{</button>}}
