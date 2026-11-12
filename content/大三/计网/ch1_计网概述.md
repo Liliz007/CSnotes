@@ -1,5 +1,5 @@
 ---
-title: 第一章 · 计算机网络概述
+title: Ch1 计网概述
 weight: 1
 ---
 

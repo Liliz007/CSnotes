@@ -1,5 +1,5 @@
 ---
-title: 第二章 · 物理层
+title: Ch2 物理层
 weight: 2
 ---
 

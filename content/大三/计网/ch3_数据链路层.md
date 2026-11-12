@@ -1,5 +1,5 @@
 ---
-title: 第三章 · 数据链路层
+title: Ch3 数据链路层
 weight: 3
 ---
 
