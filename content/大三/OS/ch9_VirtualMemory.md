@@ -109,6 +109,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 ### LRU Algorithm
 
 >既然无法往未来看，我们就改成往回看。反正都是利用时间局部性
+>with no ties：没有平手
 
 策略：把最久没用到的那个page替换掉
 
@@ -129,7 +130,10 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 * 替换这个bit为0的那些page
 
 实现4：reference bit升级版
-* 每次到时就把ref bit右移一位
+* 设置一个sring：ref history
+* 每次到时间就把ref bit右移一位
+* 选择victim的策略：比较的是history string，num更小说明其最近被访问次数更少。
+  * 直觉上，最新移进来的ref bit是在最高位的。并且它本质上是LRU的近似，所以肯定是替换掉最近用得最少的
 
 实现5：second chance
 ![](image/2026-11-10-17-27-42.png)
@@ -145,6 +149,8 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 ![](image/2026-11-10-17-32-53.png)
 
+LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而会直接又被换出去。所以有时这个方法表现不太好。
+
 # 5. Allocation of Frames
 
 >多进程时，如何安排给进程们的Frames？
@@ -159,13 +165,14 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 若一进程没有足够多的frame容量，就总会page fault。那么总是要去disk调页（I/O操作）。
 
-从而，waiting queue里的进程就很多，而ready queue很空。CPU利用率也会降低
+从而，waiting queue（）里的进程就很多，而ready queue很空。CPU利用率也会降低
 
-为了提高CPU利用率，OS会再调入一些process，但根源不在此，所以利用率并不会提高。如下图，后面那段下降就是thrashing了
+为了提高CPU利用率，OS会再调入一些process，但根源不在此，所以利用率并不会提高。反而thrashing会更严重（因为page demand变多了）
 
+如下图，后面那段下降就是thrashing了
 ![](image/2026-11-10-17-45-14.png)
 
-Thrashing：一个进程一直在忙于swap in/out pages
+**Thrashing：一个进程一直在忙于swap in/out pages。**
 
 发生原因：提供给进程的frame太少，不足以覆盖locality的范围。无法利用局部性就老是page fault了
 
@@ -173,10 +180,104 @@ Thrashing：一个进程一直在忙于swap in/out pages
 
 如何确定一个frame的locality？或者说，啥时候会发生thrashing？
 
-使用一个时间窗口来统计用到的frame
+使用一个时间窗口来统计用到的frame。并且在不同的时间段有不同的WS：
+
+![](image/2026-11-12-14-47-19.png)
+
+>根据题意确定时间窗口大小，一般是last xx frames（个数），然后看这里面包含哪些page。把这个集合作为其working set.可参考此例题：
+
+![](image/2026-11-12-14-46-34.png)
+
+那么，可以得到总WS Size（记作D）和thrashing的关系：
+* D>m，thrashing。发生thrashing，就可以挂起一些process
+
+追踪WS：
+![](image/2026-11-12-14-53-06.png)
+
+![](image/2026-11-12-14-53-26.png)
 
 # 7. Memory-Mapped Files
 
+此技术允许通过将disk块映射到mem中的page，从而将文件I/O视为常规内存访问，不使用read()/write()，从而更高效
+* 只是先映射一个空壳，当访问时发现不在mem中才触发page fault，把那一小块（而非整个文件）读进来
+
+同时，它也支持多进程share一个file
+
+![](image/2026-11-12-14-56-36.png)
+
 # 8. Allocationg Kernel Memory
 
+![](image/2026-11-12-14-59-55.png)
+
+通常从free-memory pool中分配：
+* 内核为进程所需的大小各异的structure分配/回收内存——考虑减fragment的问题 
+
+全局页表PGD有一段对应的是Kernel VAS，从而可以被进程们所共享。
+
+## Buddy System
+
+![](image/2026-11-12-15-11-34.png)
+![](image/2026-11-12-15-14-31.png)
+* 按2倍切分.新分配的先从buddy里面选，如request 35，得到了A的buddy的儿子buddy
+* 这样，可以保证内存的分配是连续的，没有external fragment
+
+相关数据结构：
+![](image/2026-11-12-15-18-14.png)
+* 左边是组织不同阶（x阶表示2^x个page）的free page的链表们
+* 右边是表示每个buddy占用情况的bitmap（左边的每个node都有对应一个bit）。0阶的灰色表示被占用，后面bit取为1的表示该buddy至少是partially occupied的
+
+>使用这种数据结构，就很容易直接找到特定大小的free buddy
+
+## Slab Allocator
+
+![](image/2026-11-12-15-24-00.png)
+
+## VM Tricks
+
+### Lazy Allocation
+
+![](image/2026-11-12-15-44-42.png)
+![](image/2026-11-12-15-44-36.png)
+
+sbrk会把brk往上抬。但不访存先不I/O也不更新页表映射
+
+### Zero fill on-demand
+
+![](image/2026-11-12-15-46-53.png)
+* bss段在data段之上
+
+![](image/2026-11-12-15-46-36.png)
+![](image/2026-11-12-15-47-33.png)
+* 对bss中的page们，不用先分配page然后memset为0，而是全都映射到一个全0的page。
+* 这个全0 page是copy-on-write的，要写的时候才真正分配一个free page给对应进程。
+
 # 9. Other Considerations
+
+## 9.1 Prepaging/Prefetching，预取
+
+基于预测，提前把还没demand到的page取进mem里。可以减少page fault次数。
+
+## 9.2 Page Size
+
+基于不同的性能考虑，对Page Size的衡量
+1. 碎片化：small
+2. table size：large
+3. I/O overhead：large
+4. Locality：small,for accurate locality
+
+## 9.3 TLB Reach
+
+TLB reach = TLB Size(num of entries) x Page Size
+
+表示TLB支持访问到的mem大小。
+
+![](image/2026-11-12-15-34-54.png)
+
+>sfence.vma 刷新TLB（RISCV指令）
+
+## 9.4 Program Structure
+
+![](image/2026-11-12-15-35-38.png)
+
+>偏应用。根据具体的存储结构来编程。
+
