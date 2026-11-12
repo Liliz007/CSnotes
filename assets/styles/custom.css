@@ -4,10 +4,10 @@
    ========================================================= */
 
 @font-face {
-  font-family: "MyChineseFont";          /* 随便起个名字 */
-  src:url("/fonts/ZiXiaoHunGeYiXiaoShouJiXingKaiTi-2.ttf") format("truetype");
+  font-family: "YanZhenQingDuoBaoTaBei";
+  src: url("fonts/YanZhenQingDuoBaoTaBei-2.ttf") format("truetype");
   font-weight: 400;
-  font-display: swap;                     /* 先显示系统字体，加载完再替换 */
+  font-display: swap;
 }
 
 /* ---------- 主题配色变量 ---------- */
@@ -78,8 +78,8 @@
 
 /* ---------- 全局字体：中西文混排 ---------- */
 body {
-  font-family: "ZiXiaoHunGeYiXiaoShouJiXingKaiTi-2",
-    -apple-system, BlinkMacSystemFont, 
+  font-family: "YanZhenQingDuoBaoTaBei",
+    -apple-system, BlinkMacSystemFont,
     "Segoe UI",
     "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
     "Noto Sans CJK SC", "Source Han Sans SC", "Helvetica Neue",
