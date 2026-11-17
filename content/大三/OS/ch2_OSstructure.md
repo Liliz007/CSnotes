@@ -7,7 +7,11 @@ weight: 3
 
 操作系统提供的服务可分为两类：面向用户的，和面向系统本身的。
 
+{{< collapse summary="图1：OS 服务（Operating System Services）" >}}
+
 ![](../image/2026-09-17-15-44-51.png)
+
+{{< /collapse >}}
 
 ## 1.1 面向用户
 
@@ -75,7 +79,11 @@ int main() {
 printf() 内部会调用 write() 这个系统调用，从而进入内核态，由内核真正把字符串写到终端。
 
 调用过程图：
+{{< collapse summary="图2：API（application programming interface，应用程序接口）" >}}
+
 ![](../image/2026-09-20-16-28-32.png)
+
+{{< /collapse >}}
 * 用户程序 → API → 系统调用接口 → 内核中的具体实现 → 返回状态和结果
 
 API 的好处：
@@ -89,7 +97,11 @@ API 的好处：
 
 * register：参数少时可用
 * 内存块：参数多时，参数可以存在内存中的 block 或 table 中，并把这块内存的地址通过 reg 传给 OS（见下图）
+  {{< collapse summary="图3：System Call 的传参方式" >}}
+
   ![](../image/2026-09-20-16-38-51.png)
+
+  {{< /collapse >}}
 * 用 stack（不常用）
 
 eg：
@@ -122,7 +134,11 @@ read(fd,buffer,max);
 * protection，保护
 
 命令分类对应：
+{{< collapse summary="图4：Types of System Calls（系统调用的类型）" >}}
+
 ![](../image/2026-09-20-16-49-08.png)
+
+{{< /collapse >}}
 
 # 3. System Programs（系统程序）
 
@@ -183,13 +199,32 @@ read(fd,buffer,max);
 
 定义：内核是操作系统中常驻内存、运行在特权态（kernel mode）的核心部分，直接管理硬件资源，并提供系统调用接口。
 
+操作系统结构类型图示：
+{{< collapse summary="操作系统结构类型对比" >}}
+{{< tabs >}}
+{{< tab "简单结构" >}}
+![](../image/2026-09-23-14-41-03.png)
+{{< /tab >}}
+{{< tab "分层结构" >}}
+![](../image/2026-09-20-17-19-29.png)
+{{< /tab >}}
+{{< tab "单体结构" >}}
+![](../image/2026-09-20-17-22-22.png)
+{{< /tab >}}
+{{< tab "微内核结构" >}}
+![](../image/2026-09-20-17-23-52.png)
+{{< /tab >}}
+{{< tab "内核模块" >}}
+![](../image/2026-09-20-17-31-04.png)
+{{< /tab >}}
+{{< /tabs >}}
+{{< /collapse >}}
+
 ## 5.1 Simple Structure（简单结构）
 
 MS-DOS
 * 未划分为模块
 * 接口和功能层次不清晰
-
-![](../image/2026-09-23-14-41-03.png)
 
 ## 5.2 Layered OS（分层结构）
 
@@ -198,8 +233,6 @@ MS-DOS
 * 上层是下层功能的集成
 * 下层是上层功能的支持
 
-![](../image/2026-09-20-17-19-29.png)
-
 不希望 N 太大，以免调用关系太复杂。
 
 是一个理论模型。
@@ -207,7 +240,6 @@ MS-DOS
 ## 5.3 Monolithic Structure（单体结构 / 巨内核）
 
 * UNIX 中，中间只有一个 kernel 层，其中集成了很多东西，见图
-  ![](../image/2026-09-20-17-22-22.png)
 
 内核是一个大整体，包含文件系统、调度、内存管理等。
 
@@ -217,7 +249,6 @@ MS-DOS
 * **把很多东西交给 user mode**
 * user 使用自己的功能模块时要通过 msg passing，效率不如 func call
 * 所以总体而言微内核速度不如巨内核
-  ![](../image/2026-09-20-17-23-52.png)
 
 但是微内核内容少，从而比巨内核更稳定，不容易出 bug。
 
@@ -229,7 +260,6 @@ MS-DOS
 * 模块间通过已知接口调用
 
 modular kernel 图示：
-![](../image/2026-09-20-17-31-04.png)
 
 ## 5.6 Other Structures（其他结构）
 
@@ -241,7 +271,11 @@ modular kernel 图示：
 
 # 6. Virtual Machines（虚拟机）
 
+{{< collapse summary="图10：Virtual Machines（虚拟机）" >}}
+
 ![](../image/2026-09-20-17-38-32.png)
+
+{{< /collapse >}}
 
 虚拟机：可以在一台物理机的 hardware 基础上创建多台虚拟的计算机，从而运行它们各自的 kernel 和 process。
 
@@ -258,7 +292,11 @@ modular kernel 图示：
 * Type 2：hosted hypervisor，包了一层 hostOS
 * 显然，type 1 更快，但也更贵
 
+{{< collapse summary="图11：Hypervisor（虚拟机管理器）" >}}
+
 ![](../image/2026-09-20-17-48-00.png)
+
+{{< /collapse >}}
 
 container：共享 OS 和 kernel。
 

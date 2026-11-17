@@ -23,11 +23,19 @@ data section可分为:
 * init:在可执行文件中要存初始值
 
 process in memory belike:
+{{< collapse summary="进程在内存中的布局" >}}
+
 ![](../image/2026-09-22-17-21-00.png)
+
+{{< /collapse >}}
 * 最底下是0地址，向上增大.最顶上是maxVA(图中展示的是virtual addr)
 * Hole:中间没被占用的VA
 
+{{< collapse summary="多线程进程的内存布局" >}}
+
 ![](../image/2026-09-23-15-14-23.png)
+
+{{< /collapse >}}
 若一个进程有多个thread：
 * 进程是资源分配单位，线程是调度单位
 * 每个thread有自己的PC，以及自己的私有栈（蓝色框）。
@@ -56,7 +64,11 @@ Q6 为何收到I/O请求之后不能直接进ready，而要先waiting?
 
 也就是讨论：process和kernel的关系？
 
+{{< collapse summary="图3：补充：kernel code 的两种执行上下文" >}}
+
 ![](../image/2026-09-23-15-24-53.png)
+
+{{< /collapse >}}
 * VAS:virtual addr space
 
 kernel code进入时有两种上下文(context)：
@@ -85,14 +97,22 @@ kernel code进入时有两种上下文(context)：
 需要注意的是，**一个处理器核心在任意时刻只能运行一个进程**，所以很多进程会处于就绪或等待状态。
 
 状态机：
+{{< collapse summary="图4：Process State" >}}
+
 ![](../image/2026-09-22-17-40-16.png)
+
+{{< /collapse >}}
 * running中进程被外部信号中断：进入ready.因为没有等待I/O之类的操作
 
 ## 1.2 Process Control Block,PCB
 
 PCB,一种表示进程的数据结构。又称任务控制块 (task control block)。如下图
 
+{{< collapse summary="图5：Process Control Block,PCB" >}}
+
 ![](../image/2026-09-23-17-02-24.png)
+
+{{< /collapse >}}
 >在linux中叫task_struct
 
 * PCB存的是管理信息，而非process所用资源本身.
@@ -127,7 +147,11 @@ PCB包含很多关于特定进程的信息片段
 
 ## 1.4 CPU switch between PCBs
 
+{{< collapse summary="图6：CPU switch between PCBs" >}}
+
 ![](image/2026-09-30-14-43-22.png)
+
+{{< /collapse >}}
 
 上图就体现了program counter的更新时机——context switch时
 
@@ -150,7 +174,11 @@ PCB包含很多关于特定进程的信息片段
 * ready状态的进程的队列，以链表形式存储
 * 队列头部是header，存储指向第一个PCB的指针
 * tail指针：指向最后一个process
+{{< collapse summary="图7：ready queue" >}}
+
 ![](../image/2026-09-23-17-30-18.png)
+
+{{< /collapse >}}
 
 其实就是CPU queue.
 
@@ -158,14 +186,26 @@ PCB包含很多关于特定进程的信息片段
 
 处于wait状态的进程，它在等什么设备，就会被放到那个相应的device-queue中。
 
+{{< collapse summary="图8：wait(device) queue" >}}
+
 ![](../image/2026-09-23-17-31-37.png)
 
+{{< /collapse >}}
+
 见下图，下面那些就是device-queue
+{{< collapse summary="图9：wait(device) queue" >}}
+
 ![](image/2026-09-30-14-45-00.png)
+
+{{< /collapse >}}
 
 ## 2.2 Representation of Process Scheduling
 
+{{< collapse summary="图10：Representation of Process Scheduling" >}}
+
 ![](image/2026-09-30-14-45-16.png)
+
+{{< /collapse >}}
 
 ## 2.3 Schedulers
 
@@ -175,7 +215,11 @@ process scheduler是什么：
 ### scheduler分类
 
 scheduler在哪运行：
+{{< collapse summary="图11：scheduler分类" >}}
+
 ![](image/2026-09-30-14-45-42.png)
+
+{{< /collapse >}}
 * long term：长期调度，选择哪些进程应该被admit进入memory(的ready queue)中
   * 交互式一般不用
   * 批处理时可能会用
@@ -184,7 +228,11 @@ scheduler在哪运行：
   * 平时谈论的一般都是short term
   * 也叫CPU scheduler
 * medium term:在内存资源不足时，选择一些进程暂时从mem中“换出”(swap out)到外存中。反之swap in.见下图。
+{{< collapse summary="图12：scheduler分类" >}}
+
 ![](image/2026-09-30-14-45-48.png)
+
+{{< /collapse >}}
 
 调度器与状态转移：
 
@@ -226,7 +274,11 @@ CPU burst：一次连续纯计算的时间段。对于CPU-bound，CPU burst很�
 >fork:产卵。--->创建子进程
 
 创建子进程后，父子状态如下：
+{{< collapse summary="fork创建子进程后的父子关系" >}}
+
 ![](image/2026-09-30-14-47-14.png)
+
+{{< /collapse >}}
 
 父进程和子进程的VAS长得一样。唯一的不同：返回的pid值
 ```c
@@ -257,17 +309,29 @@ fork失败（父进程看到）|-1
   * 但他俩是两份独立的副本，之后各自修改自己的内容，对方是看不见的
 * 子进程从产生自己的那条fork()返回后的那条指令开始往下执行（先完成赋值）
 
+{{< collapse summary="fork返回后父子进程的执行" >}}
+
 ![](image/2026-09-30-14-47-26.png)
 
+{{< /collapse >}}
+
 fork()产生的进程数：
+{{< collapse summary="fork调用的进程数量示例（一）" >}}
+
 ![](image/2026-09-30-14-47-48.png)
+
+{{< /collapse >}}
+{{< collapse summary="fork调用的进程数量示例（二）" >}}
+
 ![](image/2026-09-30-14-47-54.png)
+
+{{< /collapse >}}
 
 demo:运行外部进程，不再执行child原来的代码：
 * 调用外部程序，会把当前进程的上下文(VAS,Virtual Address Space)覆盖掉。从而child就不执行了
 * 孤儿进程：父进程结束后子进程的父亲会变成进程1，也就是parent_process_id变成1
 
-{{<collapse>}}
+{{< collapse summary="fork与exec运行外部程序" >}}
 ![](image/2026-09-30-14-48-16.png)
 * UNIX中，fork()后，使用exec()可以用新程序替换掉当前进程的内存空间。从而直接开始运行新程序了
 * fork()搭配exec()的用途：让子进程运行外部程序（不这么做的话，子进程就跟父进程一模一样，是duplicate的）
@@ -396,7 +460,11 @@ grep "Sales" employee.csv | cut -d',' -f2,4 | sort -t','
 
 两种重要模型：message passing 和 shared memory
 
+{{< collapse summary="图18：IPC,Interprocess Communication" >}}
+
 ![](image/2026-09-30-14-49-18.png)
+
+{{< /collapse >}}
 
 * 都是可以建立双向联络，也可以单向
 * 对于shared mem

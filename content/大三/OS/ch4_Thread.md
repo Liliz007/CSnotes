@@ -11,13 +11,21 @@ weight: 5
 
 ——使用多线程。
 
+{{< collapse summary="多线程提升交互性与执行效率" >}}
+
 ![](image/2026-10-13-16-54-19.png)
+
+{{< /collapse >}}
 * 每个线程都是一个loop，且互相独立
 * 线程可以自行Block到等到完成操作
 
 图示：
 
+{{< collapse summary="线程独立上下文与共享数据" >}}
+
 ![](image/2026-10-13-16-58-08.png)
+
+{{< /collapse >}}
 * multithread中：有独立的上下文、可以独立调用函数，因此各thread有自己的registers和stack
 * 全局的数据（对process来说全局）对各thread是共享的
 
@@ -36,7 +44,11 @@ multithreads的好处：
 * Multiprogramming,多道程序设计：通过并发设计，尽量让CPU不闲着（一般讲单核）
 * Multiprocessing,多处理器处理：使用多个CPU并行执行任务
 
+{{< collapse summary="多道程序与多处理器" >}}
+
 ![](image/2026-10-21-16-55-08.png)
+
+{{< /collapse >}}
 
 Concurrency vs. Parallelism
 * 并发性：同时处理多个进程，可以是一个core/多个core，每个进程都可以取得进展，但不在意时间上它们是否会有交叠（即使物理上是单核，也可以通过调度实现并发，而在某一时刻并不一定是多任务）
@@ -46,7 +58,11 @@ Concurrency vs. Parallelism
 
 见下图
 
+{{< collapse summary="并发与并行示意" >}}
+
 ![](image/2026-10-13-17-14-00.png)
+
+{{< /collapse >}}
 
 # 1. 两种特权级的Thread
 
@@ -72,31 +88,48 @@ OS知道每个进程里有多个线程。从而调度也由OS直接完成，并�
 * User thread：从用户程序和线程库的角度看到的线程。
 * Kernel Thread：操作系统内核能够管理和调度的线程执行实体。
 
-![](image/2026-10-21-16-58-22.png)
-
 有以下三种模型：
 * Many-to-one
 * One-to-one
 * Many-to-many
 
 形象类比：
+{{< collapse summary="多线程模型对比图（可切换）" >}}
+{{< tabs >}}
+{{< tab "模型总览" >}}
+![](image/2026-10-21-16-58-22.png)
+{{< /tab >}}
+{{< tab "形象类比" >}}
 ![](image/2026-10-13-17-40-03.png)
+{{< /tab >}}
+{{< tab "Many-to-One" >}}
+![](image/2026-10-21-16-59-43.png)
+![](image/2026-10-13-17-41-16.png)
+{{< /tab >}}
+{{< tab "One-to-One" >}}
+![](image/2026-10-13-17-29-50.png)
+![](image/2026-10-13-17-42-13.png)
+{{< /tab >}}
+{{< tab "Many-to-Many" >}}
+![](image/2026-10-13-17-32-07.png)
+![](image/2026-10-21-17-00-24.png)
+{{< /tab >}}
+{{< tab "Two-Level" >}}
+![](image/2026-10-13-17-39-13.png)
+{{< /tab >}}
+{{< /tabs >}}
+{{< /collapse >}}
 
 ## 2.1 Many-to-One model
-
-![](image/2026-10-21-16-59-43.png)
 
 内核看不到user thread.好处：
 * 适用于老旧系统的多线程，直接用library来操作user thread
 
 某一时刻只有一个user thread占用kernel thread在跑。若此线程发生阻塞式system call，kernel thread就会被挂起，从而整个进程都卡住了
 
-![](image/2026-10-13-17-41-16.png)
 * 拿到号码就相当于user thread占用kernel thread来运行
 
 ## 2.2 One-to-One model
-
-![](image/2026-10-13-17-29-50.png)
 
 应用中创建任意一个user thread，kernel都会给创建一个对应的kernel thread.
 
@@ -104,23 +137,15 @@ OS知道每个进程里有多个线程。从而调度也由OS直接完成，并�
 
 一个user挂起了，只有它对应的kernel thread被挂起
 
-![](image/2026-10-13-17-42-13.png)
-
 ## 2.3 Many-to-Many model
-
-![](image/2026-10-13-17-32-07.png)
 
 m个user thread，n个kernel thread.一般来说m>n
 
 为了应对user thread太多的情况。这个模型下kernel thread只会创建有限个
 
-![](image/2026-10-21-17-00-24.png)
-
 * LWP：Light weight process.
 
 ## 2.4 Two-Level model
-
-![](image/2026-10-13-17-39-13.png)
 
 # 3 Threading Issues，多线程的一些问题
 
@@ -171,12 +196,23 @@ Pthreads：同时是user-level和kernel-level library
 
 ## Linux Threads
 
+{{< collapse summary="Linux线程与内核线程结构" >}}
+{{< tabs >}}
+{{< tab "Linux task" >}}
 ![](image/2026-10-15-15-13-33.png)
+{{< /tab >}}
+{{< tab "用户线程共享资源" >}}
+![](image/2026-10-15-15-24-01.png)
+{{< /tab >}}
+{{< tab "内核线程与地址空间" >}}
+![](image/2026-10-15-15-25-27.png)
+{{< /tab >}}
+{{< /tabs >}}
+
+{{< /collapse >}}
+
 * linux中管thread叫task.
 * linux中没有严格的线程/进程的区分。由clone()出的task，父子俩共用一块addr space，那么这个孩子就可以算是父亲的thread
-
-![](image/2026-10-15-15-24-01.png)
-![](image/2026-10-15-15-25-27.png)
 
 **线程共享资源问题：**
 * user spase中一个进程的多个thread共享线程的地址空间，但它们有自己的user stack(图中那些小方块)

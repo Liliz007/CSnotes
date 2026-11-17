@@ -19,7 +19,11 @@ Base and Limit reg:
 
 ## Multistep Processing of a User Program
 
+{{< collapse summary="图1：Multistep Processing of a User Program" >}}
+
 ![](image/2026-10-22-15-49-15.png)
+
+{{< /collapse >}}
 
 * 编译输出obj文件（即.o文件）
 * 链接器linker是一个system program，功能是将多个obj（和一些库）连接起来，生成可执行文件（.exe）
@@ -29,7 +33,11 @@ Base and Limit reg:
 
 把程序中的地址映射为物理内存的地址，称为addr binding.根据其binding时间的不同，可分为以下三种（具体时间段见上一张图）
 
+{{< collapse summary="图2：Binding of Inst&Data to Memory" >}}
+
 ![](image/2026-10-22-15-50-15.png)
+
+{{< /collapse >}}
 
 * load time:编译、链接时都不知道物理地址，所以仍生成relocatable addr。
 * exe time:由硬件负责支持虚拟地址到物理地址的映射。如使用base和limit registers
@@ -51,7 +59,11 @@ compile和load-time binding不对这俩地址进行区分，因为CPU和memory u
 
 用来做VA和PA之间的映射的一个元件
 
+{{< collapse summary="图3：MMU,Memory-Management Unit" >}}
+
 ![](image/2026-10-27-16-40-14.png)
+
+{{< /collapse >}}
 
 * relocation register(也就是base register)：当CPU发出一个LA时，它就作为offset被加上relocation reg的值，然后得到PA.
 * 为了实现进程的隔离，不同进程的relocation reg的值是不一样的
@@ -86,9 +98,25 @@ compile和load-time binding不对这俩地址进行区分，因为CPU和memory u
 
 内存通常分为两大块：低地址用来放kernel，高地址用来放user process
 
+{{< collapse summary="图4-5：Contiguous Memory Allocation" >}}
+
+{{< tabs >}}
+
+{{< tab "图4" >}}
+
 ![](image/2026-10-27-16-59-36.png)
 
+{{< /tab >}}
+
+{{< tab "图5" >}}
+
 ![](image/2026-10-27-17-01-46.png)
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /collapse >}}
 
 可能会出现多个空洞。考虑如何找一个合适的空洞给新的进程，有以下方法：
 * First-fit:分配所有足够大的洞里的第一个
@@ -116,17 +144,29 @@ compile和load-time binding不对这俩地址进行区分，因为CPU和memory u
 >一种 Non-contiguous memory allocation. 并且是exe-time binding的。可消除外部碎片。
 >但是无法消除内部碎片（当进程所需空间并非page size的整数倍时，最后一个page就可能用不完）
 
+{{< collapse summary="图6：Paging" >}}
+
 ![](image/2026-10-29-15-31-24.png)
+
+{{< /collapse >}}
 
 ## 3.1 Paging Hardware
 
 CPU的address格式：
 
+{{< collapse summary="图7：Paging Hardware" >}}
+
 ![](image/2026-10-29-15-36-33.png)
+
+{{< /collapse >}}
 
 Hardware：
 
+{{< collapse summary="图8：Paging Hardware" >}}
+
 ![](image/2026-10-29-15-35-08.png)
+
+{{< /collapse >}}
 
 * pagetable entry : [page number-->frame number]
 * 整个进程的VA size = pagetable entry数 * page size
@@ -163,7 +203,11 @@ ASID(Addr Space ID)，用于在TLB中区分不同进程的页表项
 
 从而有如下公式
 
+{{< collapse summary="图10：Effective Access Time(EAT)" >}}
+
 ![](image/2026-11-03-16-46-11.png)
+
+{{< /collapse >}}
 
 $$
 EAT = (1+ε)\alpha + (ε+1+1)(1-\alpha)
@@ -175,7 +219,11 @@ $$
 
 维护一个free-frame list
 
+{{< collapse summary="图11：Free Frame Management" >}}
+
 ![](image/2026-10-29-15-44-53.png)
+
+{{< /collapse >}}
 
 ## 3.3 Memory Protection
 
@@ -194,7 +242,11 @@ shared code：只读的代码可以进程间共享
 >为什么shared code被映射到的逻辑地址也要相同？——为了保证jump指令跳转地址正确。jump中出现的只会是逻辑地址（CPU能看到的地址）
 >相应的，如果代码中不允许出现绝对地址，只能由可重定位的地址，就没有上方那种约束了。（这样的代码称为position independent code）
 
+{{< collapse summary="图13：Shared Pages" >}}
+
 ![](image/2026-11-03-17-01-40.png)
+
+{{< /collapse >}}
 
 * 上图中，frame346是code。
 
@@ -239,7 +291,11 @@ shared code：只读的代码可以进程间共享
 * pid是进程号
 * VPN是对应页号
 
+{{< collapse summary="图17：Inverted Page Table" >}}
+
 ![](image/2026-11-03-17-31-58.png)
+
+{{< /collapse >}}
 
 * 是先根据PTE找到项，再得到所需项相对表头偏移i（这个i就是内存中的frame number，就可以直接去取出frame了）
 * 但是遍历page table的开销很大，所以并不是一个很好的办法
@@ -248,22 +304,38 @@ shared code：只读的代码可以进程间共享
 
 >说的是切换进程时，要将进程从mem中换出到外存中
 
+{{< collapse summary="图18：Swapping，换入换出" >}}
+
 ![](image/2026-11-03-17-38-27.png)
+
+{{< /collapse >}}
 
 有了paging机制后，可以只换出一部分page
 
+{{< collapse summary="图19：Swapping，换入换出" >}}
+
 ![](image/2026-11-03-17-38-45.png)
+
+{{< /collapse >}}
 
 # 6. Segmentation，分段式管理
 
 段：指的是如stack,function,main program等实体单位
 
+{{< collapse summary="图20：Segmentation，分段式管理" >}}
+
 ![](image/2026-11-03-17-43-25.png)
+
+{{< /collapse >}}
 * 注意这个length表示的是段的个数
 * STLR=4时，实际上的段号是0123.
 * 同样的，limit为x时，实际上的可用空间是0-(x-1)
 
+{{< collapse summary="图21：Segmentation，分段式管理" >}}
+
 ![](image/2026-11-03-17-46-30.png)
+
+{{< /collapse >}}
 
 优点：
 * 与程序员视图对应得很好
@@ -272,7 +344,11 @@ shared code：只读的代码可以进程间共享
 
 Pentium（奔腾）的段页式管理：
 
+{{< collapse summary="图22：段页式管理" >}}
+
 ![](image/2026-11-03-17-50-01.png)
+
+{{< /collapse >}}
 
 * 先段，对程序员视图友好，可以实现细粒度的属性/权限划分
 * 后页，方便管理物理内存，防止出现内部碎片
@@ -288,13 +364,21 @@ logical addr的首字段被定义为selector，包含三个字段
 
 ## Q1
 
+{{< collapse summary="图23：Q1" >}}
+
 ![](image/2026-11-03-16-26-26.png)
+
+{{< /collapse >}}
 
 低两位是page offset。题目说对应到frame 1，那么就是00110
 
 ## Q2
 
+{{< collapse summary="图24：Q2" >}}
+
 ![](image/2026-11-03-16-35-03.png)
+
+{{< /collapse >}}
 
 十进制地址43，一个Page 8B，43/8=5，从而在Page5，偏移量为3
 
@@ -308,4 +392,3 @@ logical addr的首字段被定义为selector，包含三个字段
 Inverted Page Table就是把所有的frame都存到一个页表中。由logical addr中的pid在PT中搜寻，然后得到i。
 
 所以页表项数就是物理frame数。
-

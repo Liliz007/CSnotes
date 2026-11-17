@@ -19,11 +19,19 @@ CPU Burst和I/O burst
 
 CPU burst图例：
 
+{{< collapse summary="图1：CPU burst和I/O burst" >}}
+
 ![](image/2026-10-20-16-27-48.png)
+
+{{< /collapse >}}
 
 >特点：短时间内高频使用，后续长时间低频使用
 
+{{< collapse summary="图2：CPU burst和I/O burst" >}}
+
 ![](image/2026-10-15-15-35-32.png)
+
+{{< /collapse >}}
 
 进程的整个生命周期就是这俩交替出现。
 
@@ -49,7 +57,11 @@ CPU burst图例：
 Dispatch,指派（也就是调度）
 * context switch时save state和restore state产生的延时称为dispatch latency(指派延时)
 
+{{< collapse summary="图3：Dispatcher" >}}
+
 ![](image/2026-10-20-16-46-38.png)
+
+{{< /collapse >}}
 
 切换到U-mode是为了隔离性，user code只能在U mode下运行
 
@@ -86,7 +98,11 @@ Response time,响应时间：从提交一个request到第一个响应出现的�
 
 先来先服务。直接按顺序服务，不管它们的属性。见下图：
 
+{{< collapse summary="图4：FCFS,First Come First Served" >}}
+
 ![](image/2026-10-20-16-59-22.png)
+
+{{< /collapse >}}
 
 >Gantt Chart,甘特图：常用于表示调度方式
 
@@ -102,7 +118,11 @@ Convoy effect(护航效应)：一个CPU-bound进程和n个I/O-bound进程，那�
 
 ### Non-preemptive SJF
 
+{{< collapse summary="图5：Non-preemptive SJF" >}}
+
 ![](image/2026-10-20-17-13-33.png)
+
+{{< /collapse >}}
 
 需要关注arrival time，是为了检测某时刻ready queue里到底有哪些进程。若只有一个那当然直接把它放上去执行，如图中的P1
 
@@ -112,7 +132,11 @@ Convoy effect(护航效应)：一个CPU-bound进程和n个I/O-bound进程，那�
 
 SRTF,shortest remaining time first
 
+{{< collapse summary="图6：Preemptive SJF，又叫SRTF" >}}
+
 ![](image/2026-10-20-17-18-45.png)
+
+{{< /collapse >}}
 
 t=2时，将P1和P2比较，P1还剩5时间，P2为4时间；从而直接让P2抢占处理器。
 
@@ -126,9 +150,25 @@ t=2时，将P1和P2比较，P1还剩5时间，P2为4时间；从而直接让P2�
 
 可以根据之前的Burst来估计下一个Burst time的长度。
 
+{{< collapse summary="图7-8：Determining Length of Next CPU Burst time" >}}
+
+{{< tabs >}}
+
+{{< tab "图7" >}}
+
 ![](image/2026-10-20-17-28-06.png)
 
+{{< /tab >}}
+
+{{< tab "图8" >}}
+
 ![](image/2026-10-20-17-28-43.png)
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /collapse >}}
 
 使用指数平均拟合出的蓝线 vs. 实际的burst time黑线
 
@@ -149,13 +189,21 @@ t=2时，将P1和P2比较，P1还剩5时间，P2为4时间；从而直接让P2�
 
 >一般平均周转时间比SJF长，但响应性更好
 
+{{< collapse summary="图9：RR,Round Robin(轮转算法)" >}}
+
 ![](image/2026-10-20-17-43-07.png)
+
+{{< /collapse >}}
 
 q大小的讲究？
 * q大：若q超过了最大burst time-->退化成FCFS
 * q小：context switch太频繁，overhead is too high
 
+{{< collapse summary="图10：RR,Round Robin(轮转算法)" >}}
+
 ![](image/2026-10-20-17-47-11.png)
+
+{{< /collapse >}}
 
 P1的waiting time = 134 - burst time of P1
 
@@ -165,13 +213,21 @@ P1的waiting time = 134 - burst time of P1
 
 所以可以把ready queue分成多条queue，每个queue各自用一种合适的调度算法
 
+{{< collapse summary="图11：Multilevel Queue" >}}
+
 ![](image/2026-10-22-14-41-18.png)
+
+{{< /collapse >}}
 
 会优先执行优先级高的queue。然后每个queue内部又有自己的调度算法（当然，应该确保每个进程都能得到服务）
 
 ### Multilevel Feedback Queue
 
+{{< collapse summary="图12：Multilevel Feedback Queue" >}}
+
 ![](image/2026-10-22-14-56-09.png)
+
+{{< /collapse >}}
 
 一进程P1，若在q=8的一个q中未完成，就把它降级到q=16的queue（也就是说它的交互性没那么强），最后来到底层的纯粹计算型的FCFS，给其分配更多的CPU时间
 

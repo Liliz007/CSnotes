@@ -22,7 +22,11 @@ main parts
 ## 1.1 什么是操作系统
 
 计算机系统的构成：硬件，OS，系统程序和应用程序，user program(见下图)
+{{< collapse summary="图1：什么是操作系统" >}}
+
 ![](../image/2026-09-15-17-13-43.png)
+
+{{< /collapse >}}
 
 OS是resource allocator和control program.也就是说，OS是控制和管理整个计算机系统的软硬件资源，合理组织和调度计算机的工作和资源分配，从而给用户和其他软件提供方便的接口与功能的**程序集合**
 
@@ -59,15 +63,35 @@ bootstrap program：启动程序
 
 不过注意一下RISC-V中的叫法：
 所有的中断称作trap，底下分软硬。硬件的还是interrupt，软的是异常/环境调用(ecall)
+{{< collapse summary="图2-3：中断" >}}
+
+{{< tabs >}}
+
+{{< tab "图2" >}}
+
 ![](../image/2026-09-15-17-46-08.png)
 
+{{< /tab >}}
+
+{{< tab "图3" >}}
+
 ![](../image/2026-09-22-16-57-39.png)
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /collapse >}}
 
 硬件（如I/O device）触发的中断：异步触发
   * main program并不知道啥时候要进入interrupt handler,是突然收到信号就进了
 软件触发的中断：同步触发
 
+{{< collapse summary="图4：中断" >}}
+
 ![](../image/2026-09-22-17-01-24.png)
+
+{{< /collapse >}}
 
 ## 2.2 I/O structure
 
@@ -130,4 +154,3 @@ I/O子系统用处：
 * I/O的内存管理，包括缓冲 (在传输数据时临时存储数据) 、缓存 (将部分数据存储在更快的存储中以提高性能) 、假脱机 (一个job的输出与其他job的输入重叠)
 * 通用设备驱动程序接口
 * 用于特定硬件设备的驱动程序
-
