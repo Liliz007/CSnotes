@@ -1,6 +1,6 @@
 ---
 title: 第八章 · Main Memory
-weight: 7
+weight: 8
 ---
 
 # 1. Address & Binding
