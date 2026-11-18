@@ -17,9 +17,7 @@ CPU Burst和I/O burst
 * CPU burst：一堆指令连续运行，主要在使用CPU
 * I/O burst：主要在进行I/O，并没有运行指令
 
-CPU burst图例：
-
-{{< collapse summary="图1：CPU burst和I/O burst" >}}
+{{< collapse summary="图1：CPU burst" >}}
 
 ![](image/2026-10-20-16-27-48.png)
 
@@ -87,9 +85,9 @@ Response time,响应时间：从提交一个request到第一个响应出现的�
 * 增大吞吐率
 * 减小周转时间/等待时间/响应时间
 
-{{<collapse summary = "改善分时系统响应时间、CPU利用率from王大鹏">}}
+{{<collapse summary = "改善分时系统响应时间、CPU利用率from王道">}}
 1. 采用优先级+非抢占式调度：既可使重要任务通过高优先级尽早获得响应，又可保证次要作业不会总被抢占而出现starving
-2. 并不是进程越多CPU利用率越高，因为进程多了竞争激烈，甚至可能出现死锁
+2. 并不是进程越多CPU利用率越高，因为进程多了竞争激烈，甚至可能出现死锁（或者thrashing，在后面VM的时候会讲）
 {{</collapse>}}
 
 # 3.Scheduling Algorithm
@@ -98,7 +96,7 @@ Response time,响应时间：从提交一个request到第一个响应出现的�
 
 先来先服务。直接按顺序服务，不管它们的属性。见下图：
 
-{{< collapse summary="图4：FCFS,First Come First Served" >}}
+{{< collapse summary="图4：FCFS" >}}
 
 ![](image/2026-10-20-16-59-22.png)
 
@@ -132,7 +130,7 @@ Convoy effect(护航效应)：一个CPU-bound进程和n个I/O-bound进程，那�
 
 SRTF,shortest remaining time first
 
-{{< collapse summary="图6：Preemptive SJF，又叫SRTF" >}}
+{{< collapse summary="图6：SRTF" >}}
 
 ![](image/2026-10-20-17-18-45.png)
 
@@ -150,7 +148,7 @@ t=2时，将P1和P2比较，P1还剩5时间，P2为4时间；从而直接让P2�
 
 可以根据之前的Burst来估计下一个Burst time的长度。
 
-{{< collapse summary="图7-8：Determining Length of Next CPU Burst time" >}}
+{{< collapse summary="图7-8：估计方法" >}}
 
 {{< tabs >}}
 
@@ -189,7 +187,7 @@ t=2时，将P1和P2比较，P1还剩5时间，P2为4时间；从而直接让P2�
 
 >一般平均周转时间比SJF长，但响应性更好
 
-{{< collapse summary="图9：RR,Round Robin(轮转算法)" >}}
+{{< collapse summary="图9：RR" >}}
 
 ![](image/2026-10-20-17-43-07.png)
 
@@ -199,7 +197,7 @@ q大小的讲究？
 * q大：若q超过了最大burst time-->退化成FCFS
 * q小：context switch太频繁，overhead is too high
 
-{{< collapse summary="图10：RR,Round Robin(轮转算法)" >}}
+{{< collapse summary="图10：RR示例" >}}
 
 ![](image/2026-10-20-17-47-11.png)
 

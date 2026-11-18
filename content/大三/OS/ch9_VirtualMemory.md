@@ -31,11 +31,9 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 ## 2.1 Def
 
-{{< collapse summary="请求式调页：按需加载页面" >}}
+{{< collapse summary="PPT" >}}
 
 ![](image/2026-11-05-15-19-40.png)
-
-{{< /collapse >}}
 
 * 使用一个Lazy swapper：当一页被需要时才被swap入memory中
 * 发生page fault时会trap，然后调页要I/O并更新页表的frame number，当前进程会挂起。
@@ -44,18 +42,21 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
   * 情况一：根本没有给进程分配这个page，访存超出了它应有的logical addr space，这是一次非法访问
   * 情况二：只是表示这个page not in memory，让swapper去换进来就好了
 
->faster response和more users是指？？
-
-{{< collapse summary="请求式调页的优势" >}}
-
-![](image/2026-11-05-15-26-15.png)
+>faster response和more users:
+* faster response：程序启动或开始执行时，能够更快地响应用户（因为调页较少，响应时间也短了）
+* more users：同样的物理内存大小，可支持更多用户。因为不用把用户全部页面都load进内存。
 
 {{< /collapse >}}
 
+
+
+{{< collapse summary="分配连续页" >}}
+![](image/2026-11-05-15-26-15.png)
 * 为了方便disk顺序I/O，一般分配/换出连续的Pages
+{{< /collapse >}}
 
 步骤：
-{{< collapse summary="缺页异常处理与调页步骤" >}}
+{{< collapse summary="Page Fault处理步骤" >}}
 
 ![](image/2026-11-05-15-30-04.png)
 
@@ -68,10 +69,9 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 {{< collapse summary="图5：Performance of Demand Paging" >}}
 
 ![](image/2026-11-05-15-33-19.png)
-
-{{< /collapse >}}
 * 其中swap in占大头
 * TLB miss penalty那些的全部隐含到memory access中了
+{{< /collapse >}}
 
 不过Demand Paging只是把一开始要干的活儿均摊到后面来了，所以这些代价其实还是可以接受的。
 
@@ -79,22 +79,17 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 创建子进程时，子进程直接把父进程的页表复制一份，从而指向同一批pages：
 
-{{< collapse summary="图6：COW,Copy-on-Write" >}}
+{{< collapse summary="图6：fork和COW" >}}
 
 ![](image/2026-11-05-15-40-08.png)
 
-{{< /collapse >}}
-
 一般进程是隔离的，我们不希望p1对共享资源的modify影响到p2，从而让p1复制一份：
-
-{{< collapse summary="图7：COW,Copy-on-Write" >}}
-
 ![](image/2026-11-05-15-41-15.png)
 
-{{< /collapse >}}
 * 当发现要写的时候，会陷入OS，然后由OS复制一份给这个进程p1
 
 如果p2已经copy了A，那么p1和p2的操作就已经隔离了，p1写时就不用再copy一份A了。（总之，就是先写的那个p会copy一份出来）
+{{< /collapse >}}
 
 # 4. Page Replacement
 
@@ -111,8 +106,11 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 * 注意，被覆写/换出的victim在页表中的valid bit要改成invalid
 
 >resident page：驻留在mem中的page
+
 >evict：驱逐。把page换出mem外
+
 >prefetch：预取，基于一定的预测，提前把一些尚未请求的页面从disk调入mem中
+
 >到底哪里是page哪里是frame：进程的逻辑地址空间VAS中叫page，对应的物理内存（mem+disk）中的叫frame
 
 ## 4.1 Page Repalcement Algorithms
@@ -121,23 +119,21 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 建模：
 
-{{< collapse summary="图9：Page Repalcement Algorithms" >}}
+{{< collapse summary="图9：访问序列模型" >}}
 
 ![](image/2026-11-10-16-57-12.png)
-
+* 把中间连续重复的去掉（因为这些不可能产生page fault）
 {{< /collapse >}}
-* 把中间连续重复的去掉（这里不可能产生page fault）
 
 ### FIFO Algorithm
 
 策略：替换当前所有frame中待得最久的那个
 
-{{< collapse summary="图10：FIFO Algorithm" >}}
+{{< collapse summary="图10：FIFO" >}}
 
 ![](image/2026-11-10-16-59-07.png)
-
-{{< /collapse >}}
 * 这种表示法还挺好的，栈右边的列表示它们被替换的次序，也是新栈的内容
+{{< /collapse >}}
 
 一个恶意序列攻击：若循环的序列长度恰好比栈大小多一个page。从而使得内存frame越多，fault越多，这种现象称为 **Belady's Anomaly**
 
@@ -147,7 +143,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 策略：把将来最长时间不会用到的page替换掉。（若有平手，则使用FIFO来决定）
 
-{{< collapse summary="图11：Optimal Algorithm" >}}
+{{< collapse summary="图11：Optimal" >}}
 
 ![](image/2026-11-10-17-13-21.png)
 
@@ -162,45 +158,45 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 策略：把最久没用到的那个page替换掉
 
-{{< collapse summary="图12：LRU Algorithm" >}}
+{{< collapse summary="图12：LRU" >}}
 
 ![](image/2026-11-10-17-16-28.png)
 
 {{< /collapse >}}
 
-实现1：Counter
+**实现1：Counter**
 * 为每个page维护一个Counter，每次page被访问，就把当前clock时间写入Counter中。替换时选时间最早的。
 * 但每次替换都要scan所有page的counter，线性代价，可能不是特别好
 
-实现2：Stack
+**实现2：Stack**
 * 把所有page num用双向链表组成一个stack。把LRU的放到栈顶，最新使用的放到栈底
 * 每次移动链表中的Page都要修改一大堆指针（因为可能是从中间随便抽出来一个），代价也不太好
 
-实现3：近似方法——reference bit
+**实现3：近似方法——reference bit**
 * 为每页设置一个reference bit。初始置0
 * 若其被访问，则置为1
 * 设置一个定时器，到时就全员置0
 * 替换这个bit为0的那些page
 
-实现4：reference bit升级版
+**实现4：reference bit升级版**
 * 设置一个sring：ref history
 * 每次到时间就把ref bit右移一位
 * 选择victim的策略：比较的是history string，num更小说明其最近被访问次数更少。
   * 直觉上，最新移进来的ref bit是在最高位的。并且它本质上是LRU的近似，所以肯定是替换掉最近用得最少的
 
-实现5：second chance
-{{< collapse summary="图13：LRU Algorithm" >}}
+**实现5：second chance**
+{{< collapse summary="图13：second chance" >}}
 
 ![](image/2026-11-10-17-27-42.png)
-
-{{< /collapse >}}
 * 维护一个循环队列，不断沿着队列往下扫描
 * 同样设置ref bit，访问了则置1
 * 如果遇到ref bit = 1的，就把它置0（消耗复活甲）
 * 如果遇到ref bit = 0的，就替换它（至少一圈没被访问了，可以替换）
-加强版：
+{{< /collapse >}}
 
-{{< collapse summary="图14：LRU Algorithm" >}}
+**加强版：**
+
+{{< collapse summary="图14：enhanced second chance" >}}
 
 ![](image/2026-11-10-17-31-42.png)
 
@@ -208,7 +204,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 ### Counting-Based Algorithm
 
-{{< collapse summary="图15：Counting-Based Algorithm" >}}
+{{< collapse summary="图15：LFU和MFU" >}}
 
 ![](image/2026-11-10-17-32-53.png)
 
@@ -235,7 +231,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 为了提高CPU利用率，OS会再调入一些process，但根源不在此，所以利用率并不会提高。反而thrashing会更严重（因为page demand变多了）
 
 如下图，后面那段下降就是thrashing了
-{{< collapse summary="图16：Thrashing，颠簸" >}}
+{{< collapse summary="图16：Thrashing" >}}
 
 ![](image/2026-11-10-17-45-14.png)
 
@@ -251,7 +247,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 使用一个时间窗口来统计用到的frame。并且在不同的时间段有不同的WS：
 
-{{< collapse summary="图17：Working-Set Model，工作集模型" >}}
+{{< collapse summary="图17：Working-Set" >}}
 
 ![](image/2026-11-12-14-47-19.png)
 
@@ -259,7 +255,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 >根据题意确定时间窗口大小，一般是last xx frames（个数），然后看这里面包含哪些page。把这个集合作为其working set.可参考此例题：
 
-{{< collapse summary="图18：Working-Set Model，工作集模型" >}}
+{{< collapse summary="图18：quiz例题" >}}
 
 ![](image/2026-11-12-14-46-34.png)
 
@@ -269,7 +265,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 * D>m，thrashing。发生thrashing，就可以挂起一些process
 
 追踪WS：
-{{< collapse summary="图19-20：Working-Set Model，工作集模型" >}}
+{{< collapse summary="PPT的一些分析" >}}
 
 {{< tabs >}}
 
@@ -317,29 +313,29 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 ## Buddy System
 
-{{< collapse summary="图23：Buddy System" >}}
+{{< collapse summary="图23：分裂示意" >}}
 
 ![](image/2026-11-12-15-11-34.png)
 
 {{< /collapse >}}
-{{< collapse summary="图24：Buddy System" >}}
+{{< collapse summary="图24：分配" >}}
 
 ![](image/2026-11-12-15-14-31.png)
-
-{{< /collapse >}}
 * 按2倍切分.新分配的先从buddy里面选，如request 35，得到了A的buddy的儿子buddy
 * 这样，可以保证内存的分配是连续的，没有external fragment
+{{< /collapse >}}
+
 
 相关数据结构：
-{{< collapse summary="图25：Buddy System" >}}
+{{< collapse summary="图25：位图" >}}
 
 ![](image/2026-11-12-15-18-14.png)
-
-{{< /collapse >}}
 * 左边是组织不同阶（x阶表示2^x个page）的free page的链表们
 * 右边是表示每个buddy占用情况的bitmap（左边的每个node都有对应一个bit）。0阶的灰色表示被占用，后面bit取为1的表示该buddy至少是partially occupied的
 
 >使用这种数据结构，就很容易直接找到特定大小的free buddy
+{{< /collapse >}}
+
 
 ## Slab Allocator
 
@@ -353,12 +349,9 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 ### Lazy Allocation
 
-{{< collapse summary="图27：Lazy Allocation" >}}
+{{< collapse summary="图27-28：Lazy Allocation" >}}
 
 ![](image/2026-11-12-15-44-42.png)
-
-{{< /collapse >}}
-{{< collapse summary="图28：Lazy Allocation" >}}
 
 ![](image/2026-11-12-15-44-36.png)
 
@@ -368,19 +361,12 @@ sbrk会把brk往上抬。但不访存先不I/O也不更新页表映射
 
 ### Zero fill on-demand
 
-{{< collapse summary="图29：Zero fill on-demand" >}}
+{{< collapse summary="图29-30：Zero fill on-demand" >}}
 
 ![](image/2026-11-12-15-46-53.png)
-
-{{< /collapse >}}
 * bss段在data段之上
 
-{{< collapse summary="图30：Zero fill on-demand" >}}
-
 ![](image/2026-11-12-15-46-36.png)
-
-{{< /collapse >}}
-{{< collapse summary="图31：Zero fill on-demand" >}}
 
 ![](image/2026-11-12-15-47-33.png)
 

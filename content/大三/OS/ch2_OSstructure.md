@@ -342,3 +342,48 @@ container：共享 OS 和 kernel。
 
 
 {{</collapse>}}
+
+# 9. 补充：I/O请求时发生的事
+
+>multiprogramming到底怎么体现节省等待I/O时间、充分利用CPU资源？
+
+```
+A 正在运行
+    |
+    | read()，触发系统调用 Trap
+    v
+内核发起 I/O 请求
+    |
+    | A 阻塞，调用 schedule()
+    v
+B 开始运行
+    |
+    | 磁盘在后台继续工作
+    v
+磁盘完成 I/O，产生硬件中断
+    |
+    | 唤醒 A，A 进入 Ready 队列
+    v
+之后某次调度选择 A
+    |
+    v
+A 继续执行
+```
+
+所以其实有两次trap：
+* 第一次，A请求I/O但其未空闲。A被block住（进入waiting态），调度一个B来运行
+  * 其实真正节省的就是这部分等待I/O空闲的时间（还有后面等结果的时间，下面再说）
+* 第二次，I/O完成了，发出一个中断，A又变回ready态
+
+如果I/O一开始就空闲，则会是这样：
+1. A在running，发起I/O请求（system call），A自己变成waiting，磁盘开始读写
+2. 调度一个B上CPU运行
+3. I/O结束，发出中断。A变回ready state
+4. 下次A被调度上CPU，会从之前system call的下一条接着运行：
+
+```c
+read(fd, buffer, size);
+
+// 读取完成后，继续执行下面的代码
+process_data(buffer);
+```

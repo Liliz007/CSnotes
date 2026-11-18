@@ -11,7 +11,7 @@ weight: 5
 
 ——使用多线程。
 
-{{< collapse summary="多线程提升交互性与执行效率" >}}
+{{< collapse summary="多线程示例" >}}
 
 ![](image/2026-10-13-16-54-19.png)
 
@@ -44,7 +44,7 @@ multithreads的好处：
 * Multiprogramming,多道程序设计：通过并发设计，尽量让CPU不闲着（一般讲单核）
 * Multiprocessing,多处理器处理：使用多个CPU并行执行任务
 
-{{< collapse summary="多道程序与多处理器" >}}
+{{< collapse summary="多道程序 vs.多处理器" >}}
 
 ![](image/2026-10-21-16-55-08.png)
 
@@ -146,6 +146,8 @@ m个user thread，n个kernel thread.一般来说m>n
 * LWP：Light weight process.
 
 ## 2.4 Two-Level model
+
+其实就是Many2Many和One2One混合使用。
 
 # 3 Threading Issues，多线程的一些问题
 

@@ -46,7 +46,7 @@ process in memory belike:
 * library mappings：
   * 动态链接器将用到的库从disk中load进进程的VAS，并用`mmap`映射到某段地址。
 
-{{<collapse>}}
+{{<collapse summary="quiz补充">}}
 quiz解析
 Q4
 * VAS是分配给进程的，而非线程。也就是说，同一进程内的所有线程共用一块内存
@@ -64,7 +64,7 @@ Q6 为何收到I/O请求之后不能直接进ready，而要先waiting?
 
 也就是讨论：process和kernel的关系？
 
-{{< collapse summary="图3：补充：kernel code 的两种执行上下文" >}}
+{{< collapse summary="图3" >}}
 
 ![](../image/2026-09-23-15-24-53.png)
 
@@ -97,7 +97,7 @@ kernel code进入时有两种上下文(context)：
 需要注意的是，**一个处理器核心在任意时刻只能运行一个进程**，所以很多进程会处于就绪或等待状态。
 
 状态机：
-{{< collapse summary="图4：Process State" >}}
+{{< collapse summary="图4：状态机" >}}
 
 ![](../image/2026-09-22-17-40-16.png)
 
@@ -108,7 +108,7 @@ kernel code进入时有两种上下文(context)：
 
 PCB,一种表示进程的数据结构。又称任务控制块 (task control block)。如下图
 
-{{< collapse summary="图5：Process Control Block,PCB" >}}
+{{< collapse summary="图5：PCB" >}}
 
 ![](../image/2026-09-23-17-02-24.png)
 
@@ -180,20 +180,20 @@ PCB包含很多关于特定进程的信息片段
 
 {{< /collapse >}}
 
-其实就是CPU queue.
+>其实按设备queue来说就是CPU queue.
 
 ### wait(device) queue
 
 处于wait状态的进程，它在等什么设备，就会被放到那个相应的device-queue中。
 
-{{< collapse summary="图8：wait(device) queue" >}}
+{{< collapse summary="图8：wait queue" >}}
 
 ![](../image/2026-09-23-17-31-37.png)
 
 {{< /collapse >}}
 
 见下图，下面那些就是device-queue
-{{< collapse summary="图9：wait(device) queue" >}}
+{{< collapse summary="图9：device queue" >}}
 
 ![](image/2026-09-30-14-45-00.png)
 
@@ -201,7 +201,7 @@ PCB包含很多关于特定进程的信息片段
 
 ## 2.2 Representation of Process Scheduling
 
-{{< collapse summary="图10：Representation of Process Scheduling" >}}
+{{< collapse summary="图10" >}}
 
 ![](image/2026-09-30-14-45-16.png)
 
@@ -215,7 +215,7 @@ process scheduler是什么：
 ### scheduler分类
 
 scheduler在哪运行：
-{{< collapse summary="图11：scheduler分类" >}}
+{{< collapse summary="图11" >}}
 
 ![](image/2026-09-30-14-45-42.png)
 
@@ -228,7 +228,7 @@ scheduler在哪运行：
   * 平时谈论的一般都是short term
   * 也叫CPU scheduler
 * medium term:在内存资源不足时，选择一些进程暂时从mem中“换出”(swap out)到外存中。反之swap in.见下图。
-{{< collapse summary="图12：scheduler分类" >}}
+{{< collapse summary="图12" >}}
 
 ![](image/2026-09-30-14-45-48.png)
 
@@ -460,7 +460,7 @@ grep "Sales" employee.csv | cut -d',' -f2,4 | sort -t','
 
 两种重要模型：message passing 和 shared memory
 
-{{< collapse summary="图18：IPC,Interprocess Communication" >}}
+{{< collapse summary="图18：IPC" >}}
 
 ![](image/2026-09-30-14-49-18.png)
 
@@ -471,7 +471,7 @@ grep "Sales" employee.csv | cut -d',' -f2,4 | sort -t','
   * shared memory速度比message passing快。因为后者还要进行memory copy(读和写的时候都要)
   * mem mapping:进程共享同一块物理内存，但每个进程有自己的私有虚拟地址空间VAS。所以要通过页表映射，把这块物理内存同时映射进两个进程的VAS
 
-{{<collapse>}}
+{{<collapse summary="shared mem的代码">}}
 ```bash
 // 进程 A
 int fd = shm_open("/my_shm", O_CREAT | O_RDWR, 0666);
