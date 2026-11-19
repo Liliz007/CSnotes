@@ -37,6 +37,8 @@ Consumer：
 
 ## 2.1 临界区模型
 
+临界区的def：访问共享资源的代码段
+
 ![](image/2026-11-17-16-44-10.png)
 * 其实任何代码都可以大致这样划分（从同步的角度）
 * Entry/Exit部分：分别代表进入/退出前要做的动作
@@ -105,9 +107,234 @@ Pi和Pj的代码：（两者是完全对称的）
 
 * 有限等待：满足。因为先进临界区的那个退出之后把自己的flag置0，就防止自己再次进入，排队的那个进程就可以进临界区了。其实在这个双进程的例子中，最多等一轮就行了。
 
+## 存在的问题
+
+处理器/编译器可能会把互不依赖的读写指令位置调换。见下图
+
+![](image/2026-11-19-14-31-03.png)
+
+把flag赋值和turn赋值的顺序调换了，后面二者flag=true之后都可以进入临界区。导致不互斥了。
+
 # 4. Synchronization Hardware
 
-# 5. Semaphores
+>通过硬件保证互斥性
+
+Uniprocessors（单处理器）：关中断
+* 防止当前程序在临界区中被抢占
+* 缺点：
+  * 对于多处理器来说，一个CPU关中断阻止不了其他CPU访问临界区（？？那都关怎么就阻止了？？本来也是不同的进程不是吗）
+
+现代处理器：Specific Atomic hardware inst（特殊原子硬件指令）
+* 有两类：
+  * Test and Set：检查并set new value一个内存字
+  * Swap：原子地交换两个内存字的内容
+
+## 4.1 原子指令
+
+### TestAndSet
+
+```c
+boolean TestAndSet (boolean *target)  //target init as false
+ {
+ boolean rv = *target;
+ *target = TRUE;
+ return rv:
+ }
+```
+
+把target置成1，但返回值有不同情况。在并发情况下，返回false的那个是第一个读写成功的进程。
+
+那么，可以把这个想法用来做共享锁：
+
+```c
+while (true) {
+ while ( TestAndSet (&lock ))
+    ; // do nothing
+ 
+ // critical section
+
+lock = FALSE;
+ // remainder section 
+}
+```
+
+一直循环，直到读到lock=FALSE，才能进入临界区。这种做法的表现如何？
+* 不满足有限等待：可能饥饿。这里并没有措施防止TestAndSet被插队
+
+### Swap
+
+```c
+void Swap (boolean *a, boolean *b) 
+{
+  boolean temp = *a; 
+  *a = *b; 
+  *b = temp: }
+```
+
+同样，用来做共享锁：
+
+```c
+while (true) {
+  key = TRUE;
+  while ( key == TRUE)  //若换到了锁的FALSE值，就表示它上锁成功了
+  Swap (&lock, &key );
+ 
+      // critical section
+  lock = FALSE;
+      // remainder section 
+ }
+```
+
+同样，也是没法防止饥饿。
+
+### compare_and_swap
+
+```c
+int compare_and_swap(int *value, int expected, int new_value) 
+{ int temp = *value; 
+  if (*value == expected) 
+    *value = new_value; 
+  return temp; 
+} 
+```
+
+这个也算是TestAndSet。查看temp值就可以知道之前的value，即上锁状态。见下方：
+
+```c
+while (true)
+{ 
+  while (compare_and_swap(&lock, 0, 1) != 0) 
+    ; /* do nothing */ 
+  
+    /* critical section */ 
+  lock = 0; 
+    /* remainder section */ 
+  } 
+```
+
+但是它也无法解决饥饿问题。能解决饥饿问题的扩展方案如下：
+
+```c
+while (true) { 
+  waiting[i] = true; 
+  key = 1; 
+  while (waiting[i] && key == 1) 
+    key = compare_and_swap(&lock,0,1); 
+  waiting[i] = false; 
+    /* critical section */ 
+  j = (i + 1) % n; 
+  while ((j != i) && !waiting[j]) 
+    j = (j + 1) % n; 
+  if (j == i) 
+    lock = 0; 
+  else 
+    waiting[j] = false; /* remainder section */ }
+```
+
+## 4.2 Mutex Locks，互斥锁
+
+OS提供的更方便的接口：加锁/解锁
+* 进入临界区之前获取锁（若获取失败就卡住，不断循环等待锁释放
+* 离开后释放锁
+
+上锁/解锁的acquire和release都是原子的。
+
+由于循环等待的特性，这种锁又叫Spinlock.（之前的Swap）
+
+自旋锁 vs. 普通阻塞锁
+- Spinlock：获取不到锁，就一直占用 CPU 循环等待。
+  - 好处：若上锁时间很短，那么自旋开销比Block和Awake小多了
+- Blocking Mutex：获取不到锁，就让当前进程阻塞，让 CPU 去执行其他进程；等锁可用时再唤醒它。
+  - 要进行上下文切换，有一定开销。
+
+代码示意：但是acquire要用之前的原子指令来实现。试一试？？（其实就弄一下available就行了吧）
+```c
+acquire() {
+while (!available)
+ ; /* busy wait */
+available = false;
+}
+release() {
+available = true;
+}
+```
+
+# 5. Semaphores，信号量
+
+>一种更通用的同步工具
+
+## 5.1 概述&建模
+
+Semaphore：使用整数，可以表示可用资源的数量，更灵活
+* 对于可能有竞态的进程，它们要共享信号量。
+
+对信号量的两个原子操作wait()和signal()，建模如下：（这种是Counting Semaphore）
+
+```c
+wait(S) {
+    while (S <= 0)  //没有可用资源
+        ;  // no-op
+    S--;  //申请走一个资源
+}
+
+signal(S) {
+    S++;  //释放一个资源
+}
+```
+
+下面，把S的值限制为0和1，就是Binary semaphore（也就是mutex lock）。见下例：
+
+```c
+Semaphore S; //init as 1
+wait(S);
+  Critical Section
+signal(S);
+```
+
+>同步：一系列事情按一个规定的时序发生。
+
+![](image/2026-11-19-15-29-59.png)
+* 本例中，S要初始化为0。若为正数，则S2就可以先运行
+
+![](image/2026-11-19-15-32-55.png)
+* 情况一：一个信号量即可
+* 情况二：四个不同信号量。但选择房间的策略，或许仍应商榷（搞不好会利用率降低）
+
+## 5.2 实现
+
+* 如何保证没有多个进程同时对同一个信号量 wait 或 signal？
+  * 把 wait 和 signal 本身作为临界区。前后加上Entry和Exit，可以用前面讲的那些方法（如Mutex Lock）。
+  * 但忙等待很浪费CPU时间。如何设计没有忙等待的实现？（非忙的等待）
+
+![](image/2026-11-19-15-41-35.png)
+
+Implementation of wait:
+```c
+wait (S){ 
+  value--;  //大家都是先--，所以value能到负数
+  if (value < 0) { 
+  // add this process to waiting queue 
+  block(); 
+    } }
+```
+
+Implementation of signal:
+```c
+Signal (S){ 
+  value++; 
+  if (value <= 0) //必然有进程在等
+  { 
+    // remove a process P from the waiting queue 
+    wakeup(P); 
+    } }
+```
+
+同样的，wait和signal也要包装成临界区。（防止同时访问信号量）单核可关中断，多核可用acquire和release。但是后者现在的时间可以非常短，因为不耗费真正的等待时间，而是放入waiting queue就完事了。这样的忙等待代价是可以接收的。
+
+这种阻塞锁是Sleep Lock。
+* 通常用于context switch开销远小于等待时间的场景。
+
+总之，Sleep Lock和Spin Lock的优劣刚好相反。
 
 # 6. Classic Problems of Synchronization
 
