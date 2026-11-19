@@ -21,7 +21,7 @@ weight: 5
 
 图示：
 
-{{< collapse summary="线程独立上下文与共享数据" >}}
+{{< collapse summary="线程私有与共享数据" >}}
 
 ![](image/2026-10-13-16-58-08.png)
 
@@ -44,7 +44,7 @@ multithreads的好处：
 * Multiprogramming,多道程序设计：通过并发设计，尽量让CPU不闲着（一般讲单核）
 * Multiprocessing,多处理器处理：使用多个CPU并行执行任务
 
-{{< collapse summary="多道程序 vs.多处理器" >}}
+{{< collapse summary="多道程序与多处理器" >}}
 
 ![](image/2026-10-21-16-55-08.png)
 
@@ -94,7 +94,7 @@ OS知道每个进程里有多个线程。从而调度也由OS直接完成，并�
 * Many-to-many
 
 形象类比：
-{{< collapse summary="多线程模型对比图（可切换）" >}}
+{{< collapse summary="线程映射模型" >}}
 {{< tabs >}}
 {{< tab "模型总览" >}}
 ![](image/2026-10-21-16-58-22.png)
@@ -198,7 +198,7 @@ Pthreads：同时是user-level和kernel-level library
 
 ## Linux Threads
 
-{{< collapse summary="Linux线程与内核线程结构" >}}
+{{< collapse summary="Linux线程结构" >}}
 {{< tabs >}}
 {{< tab "Linux task" >}}
 ![](image/2026-10-15-15-13-33.png)

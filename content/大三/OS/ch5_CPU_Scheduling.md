@@ -17,7 +17,7 @@ CPU Burst和I/O burst
 * CPU burst：一堆指令连续运行，主要在使用CPU
 * I/O burst：主要在进行I/O，并没有运行指令
 
-{{< collapse summary="图1：CPU burst" >}}
+{{< collapse summary="CPU突发周期" >}}
 
 ![](image/2026-10-20-16-27-48.png)
 
@@ -25,7 +25,7 @@ CPU Burst和I/O burst
 
 >特点：短时间内高频使用，后续长时间低频使用
 
-{{< collapse summary="图2：CPU burst和I/O burst" >}}
+{{< collapse summary="CPU与I/O突发周期" >}}
 
 ![](image/2026-10-15-15-35-32.png)
 
@@ -55,7 +55,7 @@ CPU Burst和I/O burst
 Dispatch,指派（也就是调度）
 * context switch时save state和restore state产生的延时称为dispatch latency(指派延时)
 
-{{< collapse summary="图3：Dispatcher" >}}
+{{< collapse summary="Dispatcher原理" >}}
 
 ![](image/2026-10-20-16-46-38.png)
 
@@ -96,7 +96,7 @@ Response time,响应时间：从提交一个request到第一个响应出现的�
 
 先来先服务。直接按顺序服务，不管它们的属性。见下图：
 
-{{< collapse summary="图4：FCFS" >}}
+{{< collapse summary="FCFS示例" >}}
 
 ![](image/2026-10-20-16-59-22.png)
 
@@ -116,7 +116,7 @@ Convoy effect(护航效应)：一个CPU-bound进程和n个I/O-bound进程，那�
 
 ### Non-preemptive SJF
 
-{{< collapse summary="图5：Non-preemptive SJF" >}}
+{{< collapse summary="非抢占式SJF" >}}
 
 ![](image/2026-10-20-17-13-33.png)
 
@@ -130,7 +130,7 @@ Convoy effect(护航效应)：一个CPU-bound进程和n个I/O-bound进程，那�
 
 SRTF,shortest remaining time first
 
-{{< collapse summary="图6：SRTF" >}}
+{{< collapse summary="SRTF示例" >}}
 
 ![](image/2026-10-20-17-18-45.png)
 
@@ -148,7 +148,7 @@ t=2时，将P1和P2比较，P1还剩5时间，P2为4时间；从而直接让P2�
 
 可以根据之前的Burst来估计下一个Burst time的长度。
 
-{{< collapse summary="图7-8：估计方法" >}}
+{{< collapse summary="CPU突发时间估计" >}}
 
 {{< tabs >}}
 
@@ -187,7 +187,7 @@ t=2时，将P1和P2比较，P1还剩5时间，P2为4时间；从而直接让P2�
 
 >一般平均周转时间比SJF长，但响应性更好
 
-{{< collapse summary="图9：RR" >}}
+{{< collapse summary="RR调度" >}}
 
 ![](image/2026-10-20-17-43-07.png)
 
@@ -197,7 +197,7 @@ q大小的讲究？
 * q大：若q超过了最大burst time-->退化成FCFS
 * q小：context switch太频繁，overhead is too high
 
-{{< collapse summary="图10：RR示例" >}}
+{{< collapse summary="RR调度示例" >}}
 
 ![](image/2026-10-20-17-47-11.png)
 
@@ -211,7 +211,7 @@ P1的waiting time = 134 - burst time of P1
 
 所以可以把ready queue分成多条queue，每个queue各自用一种合适的调度算法
 
-{{< collapse summary="图11：Multilevel Queue" >}}
+{{< collapse summary="多级队列" >}}
 
 ![](image/2026-10-22-14-41-18.png)
 
@@ -221,7 +221,7 @@ P1的waiting time = 134 - burst time of P1
 
 ### Multilevel Feedback Queue
 
-{{< collapse summary="图12：Multilevel Feedback Queue" >}}
+{{< collapse summary="多级反馈队列" >}}
 
 ![](image/2026-10-22-14-56-09.png)
 

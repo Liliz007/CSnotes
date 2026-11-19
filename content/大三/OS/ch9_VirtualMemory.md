@@ -21,7 +21,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 由于实际上的stack，heap等这些段很小，所以中间会出现巨大的无法合理访问的hole
 
-{{< collapse summary="图1：Virtual-addr Space" >}}
+{{< collapse summary="虚拟地址空间" >}}
 
 ![](image/2026-11-05-15-18-52.png)
 
@@ -31,7 +31,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 ## 2.1 Def
 
-{{< collapse summary="PPT" >}}
+{{< collapse summary="请求式调页" >}}
 
 ![](image/2026-11-05-15-19-40.png)
 
@@ -66,7 +66,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 在这种机制下，EAT的算法又要加入一个新的参数：page fault rate（缺页比例）
 
-{{< collapse summary="图5：Performance of Demand Paging" >}}
+{{< collapse summary="请求调页性能" >}}
 
 ![](image/2026-11-05-15-33-19.png)
 * 其中swap in占大头
@@ -79,7 +79,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 创建子进程时，子进程直接把父进程的页表复制一份，从而指向同一批pages：
 
-{{< collapse summary="图6：fork和COW" >}}
+{{< collapse summary="fork与写时复制" >}}
 
 ![](image/2026-11-05-15-40-08.png)
 
@@ -98,7 +98,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 加设一个Dirty bit：有一些page从disk中进到mem之后没被Modifiy过，是clean的，可以直接覆写它。
 
 步骤：
-{{< collapse summary="图8：Page Replacement" >}}
+{{< collapse summary="页面置换步骤" >}}
 
 ![](image/2026-11-05-15-49-10.png)
 
@@ -119,7 +119,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 建模：
 
-{{< collapse summary="图9：访问序列模型" >}}
+{{< collapse summary="页面访问序列" >}}
 
 ![](image/2026-11-10-16-57-12.png)
 * 把中间连续重复的去掉（因为这些不可能产生page fault）
@@ -129,7 +129,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 策略：替换当前所有frame中待得最久的那个
 
-{{< collapse summary="图10：FIFO" >}}
+{{< collapse summary="FIFO置换" >}}
 
 ![](image/2026-11-10-16-59-07.png)
 * 这种表示法还挺好的，栈右边的列表示它们被替换的次序，也是新栈的内容
@@ -143,7 +143,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 策略：把将来最长时间不会用到的page替换掉。（若有平手，则使用FIFO来决定）
 
-{{< collapse summary="图11：Optimal" >}}
+{{< collapse summary="最佳置换" >}}
 
 ![](image/2026-11-10-17-13-21.png)
 
@@ -158,7 +158,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 策略：把最久没用到的那个page替换掉
 
-{{< collapse summary="图12：LRU" >}}
+{{< collapse summary="LRU置换" >}}
 
 ![](image/2026-11-10-17-16-28.png)
 
@@ -185,7 +185,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
   * 直觉上，最新移进来的ref bit是在最高位的。并且它本质上是LRU的近似，所以肯定是替换掉最近用得最少的
 
 **实现5：second chance**
-{{< collapse summary="图13：second chance" >}}
+{{< collapse summary="二次机会算法" >}}
 
 ![](image/2026-11-10-17-27-42.png)
 * 维护一个循环队列，不断沿着队列往下扫描
@@ -196,7 +196,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 **加强版：**
 
-{{< collapse summary="图14：enhanced second chance" >}}
+{{< collapse summary="增强二次机会算法" >}}
 
 ![](image/2026-11-10-17-31-42.png)
 
@@ -204,7 +204,7 @@ VAS中的空洞（与ch8的调度相关的不是一个东西）
 
 ### Counting-Based Algorithm
 
-{{< collapse summary="图15：LFU和MFU" >}}
+{{< collapse summary="计数置换算法" >}}
 
 ![](image/2026-11-10-17-32-53.png)
 
@@ -231,7 +231,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 为了提高CPU利用率，OS会再调入一些process，但根源不在此，所以利用率并不会提高。反而thrashing会更严重（因为page demand变多了）
 
 如下图，后面那段下降就是thrashing了
-{{< collapse summary="图16：Thrashing" >}}
+{{< collapse summary="颠簸现象" >}}
 
 ![](image/2026-11-10-17-45-14.png)
 
@@ -247,7 +247,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 使用一个时间窗口来统计用到的frame。并且在不同的时间段有不同的WS：
 
-{{< collapse summary="图17：Working-Set" >}}
+{{< collapse summary="工作集模型" >}}
 
 ![](image/2026-11-12-14-47-19.png)
 
@@ -255,7 +255,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 >根据题意确定时间窗口大小，一般是last xx frames（个数），然后看这里面包含哪些page。把这个集合作为其working set.可参考此例题：
 
-{{< collapse summary="图18：quiz例题" >}}
+{{< collapse summary="工作集例题" >}}
 
 ![](image/2026-11-12-14-46-34.png)
 
@@ -265,7 +265,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 * D>m，thrashing。发生thrashing，就可以挂起一些process
 
 追踪WS：
-{{< collapse summary="PPT的一些分析" >}}
+{{< collapse summary="工作集追踪" >}}
 
 {{< tabs >}}
 
@@ -292,7 +292,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 同时，它也支持多进程share一个file
 
-{{< collapse summary="图21：Memory-Mapped Files" >}}
+{{< collapse summary="内存映射文件" >}}
 
 ![](image/2026-11-12-14-56-36.png)
 
@@ -300,7 +300,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 # 8. Allocationg Kernel Memory
 
-{{< collapse summary="图22：Allocationg Kernel Memory" >}}
+{{< collapse summary="内核内存分配" >}}
 
 ![](image/2026-11-12-14-59-55.png)
 
@@ -313,12 +313,12 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 ## Buddy System
 
-{{< collapse summary="图23：分裂示意" >}}
+{{< collapse summary="伙伴系统分裂" >}}
 
 ![](image/2026-11-12-15-11-34.png)
 
 {{< /collapse >}}
-{{< collapse summary="图24：分配" >}}
+{{< collapse summary="伙伴分配" >}}
 
 ![](image/2026-11-12-15-14-31.png)
 * 按2倍切分.新分配的先从buddy里面选，如request 35，得到了A的buddy的儿子buddy
@@ -327,7 +327,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 
 相关数据结构：
-{{< collapse summary="图25：位图" >}}
+{{< collapse summary="伙伴位图" >}}
 
 ![](image/2026-11-12-15-18-14.png)
 * 左边是组织不同阶（x阶表示2^x个page）的free page的链表们
@@ -339,7 +339,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 ## Slab Allocator
 
-{{< collapse summary="图26：Slab Allocator" >}}
+{{< collapse summary="Slab分配器" >}}
 
 ![](image/2026-11-12-15-24-00.png)
 
@@ -349,7 +349,7 @@ LFU：有些刚刚加进来的Page，其count=1，但它并不会被忽略，而
 
 ### Lazy Allocation
 
-{{< collapse summary="图27-28：Lazy Allocation" >}}
+{{< collapse summary="延迟分配" >}}
 
 ![](image/2026-11-12-15-44-42.png)
 
@@ -361,7 +361,7 @@ sbrk会把brk往上抬。但不访存先不I/O也不更新页表映射
 
 ### Zero fill on-demand
 
-{{< collapse summary="图29-30：Zero fill on-demand" >}}
+{{< collapse summary="按需清零" >}}
 
 ![](image/2026-11-12-15-46-53.png)
 * bss段在data段之上
@@ -394,7 +394,7 @@ TLB reach = TLB Size(num of entries) x Page Size
 
 表示TLB支持访问到的mem大小。
 
-{{< collapse summary="图32：TLB Reach" >}}
+{{< collapse summary="TLB覆盖范围" >}}
 
 ![](image/2026-11-12-15-34-54.png)
 
@@ -404,7 +404,7 @@ TLB reach = TLB Size(num of entries) x Page Size
 
 ## 9.4 Program Structure
 
-{{< collapse summary="图33：Program Structure" >}}
+{{< collapse summary="程序访问局部性" >}}
 
 ![](image/2026-11-12-15-35-38.png)
 

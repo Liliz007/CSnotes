@@ -18,14 +18,19 @@ Serial vs. Serializable
 
 ## Intro:Producer vs. Consumer
 
-Producer：
+{{< collapse summary="生产者与消费者" >}}
+{{< tabs >}}
+{{< tab "生产者" >}}
 ![](image/2026-11-17-16-36-06.png)
-
-Consumer：
+{{< /tab >}}
+{{< tab "消费者" >}}
 ![](image/2026-11-17-16-36-25.png)
-
-指令实现：
+{{< /tab >}}
+{{< tab "指令实现" >}}
 ![](image/2026-11-17-16-36-39.png)
+{{< /tab >}}
+{{< /tabs >}}
+{{< /collapse >}}
 * count++/--并不是原子操作，而是可以分为多条指令。
 * 由于指令执行的顺序不同，count可能有4、5、6三种取值。（但合理的结果只有5）
 * 这就是Race Condition，竞态条件
@@ -39,7 +44,9 @@ Consumer：
 
 临界区的def：访问共享资源的代码段
 
+{{< collapse summary="临界区模型" >}}
 ![](image/2026-11-17-16-44-10.png)
+{{< /collapse >}}
 * 其实任何代码都可以大致这样划分（从同步的角度）
 * Entry/Exit部分：分别代表进入/退出前要做的动作
 
@@ -52,13 +59,23 @@ Consumer：
 
 ### 三个反例
 
-Algorithm 1：
+三个算法的特性对比：
+{{< collapse summary="临界区算法反例" >}}
+{{< tabs >}}
+{{< tab "算法一" >}}
 ![](image/2026-11-17-16-55-27.png)
+{{< /tab >}}
+{{< tab "算法二" >}}
+![](image/2026-11-17-17-07-54.png)
+{{< /tab >}}
+{{< tab "算法三" >}}
+![](image/2026-11-17-17-09-08.png)
+{{< /tab >}}
+{{< /tabs >}}
+{{< /collapse >}}
 * Mutual Exlcusion：turn初值为0，下面两个进程分别为P0和P1.显然，它俩不可能同时进临界区
 * Progress：不满足。第一次Pj在remainder中block住，turn=i，此时是可以进的；但退出之后turn=j，第二次就进不去了
 
-Alogorithm 2：
-![](image/2026-11-17-17-07-54.png)
 Progress：不满足，解释如下：假设 Pi 和 Pj 几乎同时想进入临界区。
 
 按照下面的顺序执行：
@@ -72,8 +89,6 @@ Progress：不满足，解释如下：假设 Pi 和 Pj 几乎同时想进入临�
 
 双方都在等对方的flag变为false，双双卡死。
 
-Algorithm 3：
-![](image/2026-11-17-17-09-08.png)
 Mutual不满足。若两个while(flag[x])近乎同时执行，此时两个都可以进临界区：
 执行顺序|	Pi	|Pj
 :-:|-|-
@@ -89,7 +104,9 @@ Mutual不满足。若两个while(flag[x])近乎同时执行，此时两个都可
 假设LOAD/STORE都是atomic的（也就是说，下面的赋值不会有竞态）；turn表示当前是放谁进临界区；flag[i]=True表示i准备好进入临界区
 
 Pi和Pj的代码：（两者是完全对称的）
+{{< collapse summary="Peterson互斥协议" >}}
 ![](image/2026-11-17-17-14-03.png)
+{{< /collapse >}}
 * 互斥：满足，turn只能取一个值
 * Progress：满足。因为用了两个量来做while，可以考察以下执行顺序：
 
@@ -111,7 +128,9 @@ Pi和Pj的代码：（两者是完全对称的）
 
 处理器/编译器可能会把互不依赖的读写指令位置调换。见下图
 
+{{< collapse summary="指令重排导致的竞态" >}}
 ![](image/2026-11-19-14-31-03.png)
+{{< /collapse >}}
 
 把flag赋值和turn赋值的顺序调换了，后面二者flag=true之后都可以进入临界区。导致不互斥了。
 
@@ -133,6 +152,8 @@ Uniprocessors（单处理器）：关中断
 
 ### TestAndSet
 
+{{< collapse summary="TestAndSet原子操作" >}}
+
 ```c
 boolean TestAndSet (boolean *target)  //target init as false
  {
@@ -142,9 +163,13 @@ boolean TestAndSet (boolean *target)  //target init as false
  }
 ```
 
+{{< /collapse >}}
+
 把target置成1，但返回值有不同情况。在并发情况下，返回false的那个是第一个读写成功的进程。
 
 那么，可以把这个想法用来做共享锁：
+
+{{< collapse summary="TestAndSet自旋锁" >}}
 
 ```c
 while (true) {
@@ -158,10 +183,14 @@ lock = FALSE;
 }
 ```
 
+{{< /collapse >}}
+
 一直循环，直到读到lock=FALSE，才能进入临界区。这种做法的表现如何？
 * 不满足有限等待：可能饥饿。这里并没有措施防止TestAndSet被插队
 
 ### Swap
+
+{{< collapse summary="Swap原子操作" >}}
 
 ```c
 void Swap (boolean *a, boolean *b) 
@@ -171,7 +200,11 @@ void Swap (boolean *a, boolean *b)
   *b = temp: }
 ```
 
+{{< /collapse >}}
+
 同样，用来做共享锁：
+
+{{< collapse summary="Swap锁" >}}
 
 ```c
 while (true) {
@@ -185,9 +218,13 @@ while (true) {
  }
 ```
 
+{{< /collapse >}}
+
 同样，也是没法防止饥饿。
 
 ### compare_and_swap
+
+{{< collapse summary="compare-and-swap指令" >}}
 
 ```c
 int compare_and_swap(int *value, int expected, int new_value) 
@@ -198,7 +235,11 @@ int compare_and_swap(int *value, int expected, int new_value)
 } 
 ```
 
+{{< /collapse >}}
+
 这个也算是TestAndSet。查看temp值就可以知道之前的value，即上锁状态。见下方：
+
+{{< collapse summary="CAS自旋锁" >}}
 
 ```c
 while (true)
@@ -212,7 +253,11 @@ while (true)
   } 
 ```
 
+{{< /collapse >}}
+
 但是它也无法解决饥饿问题。能解决饥饿问题的扩展方案如下：
+
+{{< collapse summary="有限等待锁" >}}
 
 ```c
 while (true) { 
@@ -231,6 +276,8 @@ while (true) {
     waiting[j] = false; /* remainder section */ }
 ```
 
+{{< /collapse >}}
+
 ## 4.2 Mutex Locks，互斥锁
 
 OS提供的更方便的接口：加锁/解锁
@@ -248,6 +295,8 @@ OS提供的更方便的接口：加锁/解锁
   - 要进行上下文切换，有一定开销。
 
 代码示意：但是acquire要用之前的原子指令来实现。试一试？？（其实就弄一下available就行了吧）
+{{< collapse summary="互斥锁接口" >}}
+
 ```c
 acquire() {
 while (!available)
@@ -259,6 +308,8 @@ available = true;
 }
 ```
 
+{{< /collapse >}}
+
 # 5. Semaphores，信号量
 
 >一种更通用的同步工具
@@ -269,6 +320,8 @@ Semaphore：使用整数，可以表示可用资源的数量，更灵活
 * 对于可能有竞态的进程，它们要共享信号量。
 
 对信号量的两个原子操作wait()和signal()，建模如下：（这种是Counting Semaphore）
+
+{{< collapse summary="忙等待信号量" >}}
 
 ```c
 wait(S) {
@@ -282,7 +335,11 @@ signal(S) {
 }
 ```
 
+{{< /collapse >}}
+
 下面，把S的值限制为0和1，就是Binary semaphore（也就是mutex lock）。见下例：
+
+{{< collapse summary="二元信号量" >}}
 
 ```c
 Semaphore S; //init as 1
@@ -291,12 +348,22 @@ wait(S);
 signal(S);
 ```
 
+{{< /collapse >}}
+
 >同步：一系列事情按一个规定的时序发生。
 
+{{< collapse summary="信号量同步顺序" >}}
+{{< tabs >}}
+{{< tab "例一" >}}
 ![](image/2026-11-19-15-29-59.png)
+{{< /tab >}}
+{{< tab "例二" >}}
+![](image/2026-11-19-15-32-55.png)
+{{< /tab >}}
+{{< /tabs >}}
+{{< /collapse >}}
 * 本例中，S要初始化为0。若为正数，则S2就可以先运行
 
-![](image/2026-11-19-15-32-55.png)
 * 情况一：一个信号量即可
 * 情况二：四个不同信号量。但选择房间的策略，或许仍应商榷（搞不好会利用率降低）
 
@@ -306,9 +373,13 @@ signal(S);
   * 把 wait 和 signal 本身作为临界区。前后加上Entry和Exit，可以用前面讲的那些方法（如Mutex Lock）。
   * 但忙等待很浪费CPU时间。如何设计没有忙等待的实现？（非忙的等待）
 
+{{< collapse summary="信号量阻塞实现" >}}
 ![](image/2026-11-19-15-41-35.png)
+{{< /collapse >}}
 
 Implementation of wait:
+{{< collapse summary="阻塞式wait" >}}
+
 ```c
 wait (S){ 
   value--;  //大家都是先--，所以value能到负数
@@ -318,7 +389,11 @@ wait (S){
     } }
 ```
 
+{{< /collapse >}}
+
 Implementation of signal:
+{{< collapse summary="唤醒式signal" >}}
+
 ```c
 Signal (S){ 
   value++; 
@@ -329,7 +404,9 @@ Signal (S){
     } }
 ```
 
-同样的，wait和signal也要包装成临界区。（防止同时访问信号量）单核可关中断，多核可用acquire和release。但是后者现在的时间可以非常短，因为不耗费真正的等待时间，而是放入waiting queue就完事了。这样的忙等待代价是可以接收的。
+{{< /collapse >}}
+
+同样的，wait和signal也要包装成临界区（防止同时访问信号量）。单核可关中断，多核可用acquire和release。但是acquire和release现在的时间可以非常短，因为不耗费真正的等待时间，而是放入waiting queue就完事了。这样的忙等待代价是可以接受的。
 
 这种阻塞锁是Sleep Lock。
 * 通常用于context switch开销远小于等待时间的场景。

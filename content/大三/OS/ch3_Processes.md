@@ -64,7 +64,7 @@ Q6 为何收到I/O请求之后不能直接进ready，而要先waiting?
 
 也就是讨论：process和kernel的关系？
 
-{{< collapse summary="图3" >}}
+{{< collapse summary="进程上下文" >}}
 
 ![](../image/2026-09-23-15-24-53.png)
 
@@ -97,7 +97,7 @@ kernel code进入时有两种上下文(context)：
 需要注意的是，**一个处理器核心在任意时刻只能运行一个进程**，所以很多进程会处于就绪或等待状态。
 
 状态机：
-{{< collapse summary="图4：状态机" >}}
+{{< collapse summary="进程状态" >}}
 
 ![](../image/2026-09-22-17-40-16.png)
 
@@ -108,7 +108,7 @@ kernel code进入时有两种上下文(context)：
 
 PCB,一种表示进程的数据结构。又称任务控制块 (task control block)。如下图
 
-{{< collapse summary="图5：PCB" >}}
+{{< collapse summary="进程控制块" >}}
 
 ![](../image/2026-09-23-17-02-24.png)
 
@@ -147,7 +147,7 @@ PCB包含很多关于特定进程的信息片段
 
 ## 1.4 CPU switch between PCBs
 
-{{< collapse summary="图6：CPU switch between PCBs" >}}
+{{< collapse summary="进程切换" >}}
 
 ![](image/2026-09-30-14-43-22.png)
 
@@ -174,7 +174,7 @@ PCB包含很多关于特定进程的信息片段
 * ready状态的进程的队列，以链表形式存储
 * 队列头部是header，存储指向第一个PCB的指针
 * tail指针：指向最后一个process
-{{< collapse summary="图7：ready queue" >}}
+{{< collapse summary="就绪队列" >}}
 
 ![](../image/2026-09-23-17-30-18.png)
 
@@ -186,14 +186,14 @@ PCB包含很多关于特定进程的信息片段
 
 处于wait状态的进程，它在等什么设备，就会被放到那个相应的device-queue中。
 
-{{< collapse summary="图8：wait queue" >}}
+{{< collapse summary="等待队列" >}}
 
 ![](../image/2026-09-23-17-31-37.png)
 
 {{< /collapse >}}
 
 见下图，下面那些就是device-queue
-{{< collapse summary="图9：device queue" >}}
+{{< collapse summary="设备队列" >}}
 
 ![](image/2026-09-30-14-45-00.png)
 
@@ -201,7 +201,7 @@ PCB包含很多关于特定进程的信息片段
 
 ## 2.2 Representation of Process Scheduling
 
-{{< collapse summary="图10" >}}
+{{< collapse summary="进程调度流程" >}}
 
 ![](image/2026-09-30-14-45-16.png)
 
@@ -215,7 +215,7 @@ process scheduler是什么：
 ### scheduler分类
 
 scheduler在哪运行：
-{{< collapse summary="图11" >}}
+{{< collapse summary="调度器分类" >}}
 
 ![](image/2026-09-30-14-45-42.png)
 
@@ -228,7 +228,7 @@ scheduler在哪运行：
   * 平时谈论的一般都是short term
   * 也叫CPU scheduler
 * medium term:在内存资源不足时，选择一些进程暂时从mem中“换出”(swap out)到外存中。反之swap in.见下图。
-{{< collapse summary="图12" >}}
+{{< collapse summary="中期调度换出" >}}
 
 ![](image/2026-09-30-14-45-48.png)
 
@@ -274,13 +274,15 @@ CPU burst：一次连续纯计算的时间段。对于CPU-bound，CPU burst很�
 >fork:产卵。--->创建子进程
 
 创建子进程后，父子状态如下：
-{{< collapse summary="fork创建子进程后的父子关系" >}}
+{{< collapse summary="fork父子关系" >}}
 
 ![](image/2026-09-30-14-47-14.png)
 
 {{< /collapse >}}
 
 父进程和子进程的VAS长得一样。唯一的不同：返回的pid值
+{{< collapse summary="fork示例" >}}
+
 ```c
 int main() { 
   pid_t pid; /* fork another process */ 
@@ -296,6 +298,8 @@ int main() {
 }
 ```
 
+{{< /collapse >}}
+
 fork()一次调用，父子进程看到不同的返回值：
 进程|返回值
 -|-
@@ -309,19 +313,19 @@ fork失败（父进程看到）|-1
   * 但他俩是两份独立的副本，之后各自修改自己的内容，对方是看不见的
 * 子进程从产生自己的那条fork()返回后的那条指令开始往下执行（先完成赋值）
 
-{{< collapse summary="fork返回后父子进程的执行" >}}
+{{< collapse summary="fork执行过程" >}}
 
 ![](image/2026-09-30-14-47-26.png)
 
 {{< /collapse >}}
 
 fork()产生的进程数：
-{{< collapse summary="fork调用的进程数量示例（一）" >}}
+{{< collapse summary="fork数量示例一" >}}
 
 ![](image/2026-09-30-14-47-48.png)
 
 {{< /collapse >}}
-{{< collapse summary="fork调用的进程数量示例（二）" >}}
+{{< collapse summary="fork数量示例二" >}}
 
 ![](image/2026-09-30-14-47-54.png)
 
@@ -331,7 +335,7 @@ demo:运行外部进程，不再执行child原来的代码：
 * 调用外部程序，会把当前进程的上下文(VAS,Virtual Address Space)覆盖掉。从而child就不执行了
 * 孤儿进程：父进程结束后子进程的父亲会变成进程1，也就是parent_process_id变成1
 
-{{< collapse summary="fork与exec运行外部程序" >}}
+{{< collapse summary="fork与exec" >}}
 ![](image/2026-09-30-14-48-16.png)
 * UNIX中，fork()后，使用exec()可以用新程序替换掉当前进程的内存空间。从而直接开始运行新程序了
 * fork()搭配exec()的用途：让子进程运行外部程序（不这么做的话，子进程就跟父进程一模一样，是duplicate的）
@@ -374,12 +378,18 @@ buffer可以分两类：
 * 他俩的key difference：unbounded的CPU不用等待
 
 shared data:
+{{< collapse summary="共享缓冲区结构" >}}
+
 ```c
 #define BUFFER_SIZE 10 
 typedef struct { . . . } item; 
 item buffer[BUFFER_SIZE]; 
 int in = 0; int out = 0;
 ```
+
+{{< /collapse >}}
+
+{{< collapse summary="生产者逻辑" >}}
 
 ```c
 //producer
@@ -392,6 +402,10 @@ while (true) {
  in = (in + 1) % BUFFER_SIZE;
  }
 ```
+
+{{< /collapse >}}
+
+{{< collapse summary="消费者逻辑" >}}
 
 ```c
 //consumer
@@ -407,11 +421,15 @@ while (true) {
  }
 ```
 
+{{< /collapse >}}
+
 buffer共享，in/out也共享
 
 buffer中最多存$BUFFER_SIZE - 1$个元素（为了区分empty和full这俩状态）
 
 把buffer用满：
+{{< collapse summary="缓冲区满时的处理" >}}
+
 ```c
 while (true) {
   Produce an item;
@@ -422,6 +440,10 @@ while (true) {
   in = (in + 1) % BUFFER_SIZE;
  }
 ```
+
+{{< /collapse >}}
+
+{{< collapse summary="缓冲区状态变化" >}}
 
 ```
 in|out|buffer
@@ -439,28 +461,38 @@ in|out|buffer
 3|3(判断后卡住)|[0,0,0,D]
 ```
 
+{{< /collapse >}}
+
 >进一步，引入count参数：表示buffer中元素数量。有潜在问题（同步）
 
 {{<collapse>}}
 linux中的pipes(管道)：
+{{< collapse summary="管道命令" >}}
+
 ```bash
 processA | processB  #A会作为信息的生产者，其输出的信息会流通到B
 processA | processB | processC | ...  #可以级联。每个管道中流通的信息不同，主要取决于管道左端相邻的这个进程的output是什么
 ```
 
+{{< /collapse >}}
+
 pipe操作很适合于处理表格数据。如把命令A的输出交给命令B，有点像数据库里面那种SQL expr
+{{< collapse summary="CSV管道处理" >}}
+
 ```bash
 grep "Sales" employee.csv | cut -d',' -f2,4 | sort -t','
 #把匹配的含Sales行数据交给cut，cut选出第2和4列交给sort
 #在大规模数据中，cut不用等grep全处理完，选出来就直接往后流。是streamly的
 ```
+
+{{< /collapse >}}
 {{</collapse>}}
 
 # 5.IPC,Interprocess Communication
 
 两种重要模型：message passing 和 shared memory
 
-{{< collapse summary="图18：IPC" >}}
+{{< collapse summary="IPC模型" >}}
 
 ![](image/2026-09-30-14-49-18.png)
 
@@ -472,6 +504,8 @@ grep "Sales" employee.csv | cut -d',' -f2,4 | sort -t','
   * mem mapping:进程共享同一块物理内存，但每个进程有自己的私有虚拟地址空间VAS。所以要通过页表映射，把这块物理内存同时映射进两个进程的VAS
 
 {{<collapse summary="shared mem的代码">}}
+{{< collapse summary="共享内存映射" >}}
+
 ```bash
 // 进程 A
 int fd = shm_open("/my_shm", O_CREAT | O_RDWR, 0666);
@@ -484,6 +518,8 @@ int fd = shm_open("/my_shm", O_RDWR, 0666);
 void *ptr = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 // 进程 B 的 ptr 指向同一块物理内存
 ```
+
+{{< /collapse >}}
 mmap 的关键参数：
 * MAP_SHARED：共享映射，多个进程看到同一块内存。
 * MAP_PRIVATE：私有映射，写时复制（copy-on-write）

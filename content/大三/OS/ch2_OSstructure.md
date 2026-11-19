@@ -7,7 +7,7 @@ weight: 3
 
 操作系统提供的服务可分为两类：面向用户的，和面向系统本身的。
 
-{{< collapse summary="图1：OS 服务（Operating System Services）" >}}
+{{< collapse summary="OS服务" >}}
 
 ![](../image/2026-09-17-15-44-51.png)
 
@@ -68,6 +68,8 @@ weight: 3
 * 通过调用库函数（library）中的系统调用，陷入 kernel mode。
 
 eg：
+{{< collapse summary="printf示例" >}}
+
 ```c
 #include <stdio.h>
 int main() {
@@ -76,10 +78,12 @@ int main() {
 }
 ```
 
+{{< /collapse >}}
+
 printf() 内部会调用 write() 这个系统调用，从而进入内核态，由内核真正把字符串写到终端。
 
 调用过程图：
-{{< collapse summary="图2：API（application programming interface，应用程序接口）" >}}
+{{< collapse summary="API调用过程" >}}
 
 ![](../image/2026-09-20-16-28-32.png)
 
@@ -97,7 +101,7 @@ API 的好处：
 
 * register：参数少时可用
 * 内存块：参数多时，参数可以存在内存中的 block 或 table 中，并把这块内存的地址通过 reg 传给 OS（见下图）
-  {{< collapse summary="图3：System Call 的传参方式" >}}
+  {{< collapse summary="系统调用传参" >}}
 
   ![](../image/2026-09-20-16-38-51.png)
 
@@ -105,10 +109,14 @@ API 的好处：
 * 用 stack（不常用）
 
 eg：
+{{< collapse summary="read参数示例" >}}
+
 ```
 read(fd,buffer,max);
 //buffer在user space中，承接从kernel space传出的数据
 ```
+
+{{< /collapse >}}
 
 ## 2.3 trap frame（中断帧）
 
@@ -134,7 +142,7 @@ read(fd,buffer,max);
 * protection，保护
 
 命令分类对应：
-{{< collapse summary="图4：Types of System Calls（系统调用的类型）" >}}
+{{< collapse summary="系统调用分类" >}}
 
 ![](../image/2026-09-20-16-49-08.png)
 
@@ -271,7 +279,7 @@ modular kernel 图示：
 
 # 6. Virtual Machines（虚拟机）
 
-{{< collapse summary="图10：Virtual Machines（虚拟机）" >}}
+{{< collapse summary="虚拟机结构" >}}
 
 ![](../image/2026-09-20-17-38-32.png)
 
@@ -292,7 +300,7 @@ modular kernel 图示：
 * Type 2：hosted hypervisor，包了一层 hostOS
 * 显然，type 1 更快，但也更贵
 
-{{< collapse summary="图11：Hypervisor（虚拟机管理器）" >}}
+{{< collapse summary="Hypervisor类型" >}}
 
 ![](../image/2026-09-20-17-48-00.png)
 
@@ -347,6 +355,8 @@ container：共享 OS 和 kernel。
 
 >multiprogramming到底怎么体现节省等待I/O时间、充分利用CPU资源？
 
+{{< collapse summary="I/O等待过程" >}}
+
 ```
 A 正在运行
     |
@@ -370,6 +380,8 @@ B 开始运行
 A 继续执行
 ```
 
+{{< /collapse >}}
+
 所以其实有两次trap：
 * 第一次，A请求I/O但其未空闲。A被block住（进入waiting态），调度一个B来运行
   * 其实真正节省的就是这部分等待I/O空闲的时间（还有后面等结果的时间，下面再说）
@@ -381,9 +393,13 @@ A 继续执行
 3. I/O结束，发出中断。A变回ready state
 4. 下次A被调度上CPU，会从之前system call的下一条接着运行：
 
+{{< collapse summary="读取后的处理" >}}
+
 ```c
 read(fd, buffer, size);
 
 // 读取完成后，继续执行下面的代码
 process_data(buffer);
 ```
+
+{{< /collapse >}}
