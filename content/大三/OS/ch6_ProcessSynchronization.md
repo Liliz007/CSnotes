@@ -64,18 +64,11 @@ Serial vs. Serializable
 {{< tabs >}}
 {{< tab "算法一" >}}
 ![](image/2026-11-17-16-55-27.png)
+* Mutual Exlcusion：turn初值为0，下面两个进程分别为P0和P1.显然，它俩不可能同时进临界区
+* Progress：不满足。第一次Pj在remainder中block住，turn=i，此时是可以进的；但退出之后turn=j，第二次就进不去了
 {{< /tab >}}
 {{< tab "算法二" >}}
 ![](image/2026-11-17-17-07-54.png)
-{{< /tab >}}
-{{< tab "算法三" >}}
-![](image/2026-11-17-17-09-08.png)
-{{< /tab >}}
-{{< /tabs >}}
-{{< /collapse >}}
-* Mutual Exlcusion：turn初值为0，下面两个进程分别为P0和P1.显然，它俩不可能同时进临界区
-* Progress：不满足。第一次Pj在remainder中block住，turn=i，此时是可以进的；但退出之后turn=j，第二次就进不去了
-
 Progress：不满足，解释如下：假设 Pi 和 Pj 几乎同时想进入临界区。
 
 按照下面的顺序执行：
@@ -88,7 +81,9 @@ Progress：不满足，解释如下：假设 Pi 和 Pj 几乎同时想进入临�
 5	|一直等待	|一直等待
 
 双方都在等对方的flag变为false，双双卡死。
-
+{{< /tab >}}
+{{< tab "算法三" >}}
+![](image/2026-11-17-17-09-08.png)
 Mutual不满足。若两个while(flag[x])近乎同时执行，此时两个都可以进临界区：
 执行顺序|	Pi	|Pj
 :-:|-|-
@@ -98,6 +93,9 @@ Mutual不满足。若两个while(flag[x])近乎同时执行，此时两个都可
 4	|	|flag[j]=TRUE
 5	|进入临界区	|
 6   |   |进入临界区
+{{< /tab >}}
+{{< /tabs >}}
+{{< /collapse >}}
 
 # 3. Peterson's Solution(2 Processes)
 
