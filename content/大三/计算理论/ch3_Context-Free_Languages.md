@@ -132,30 +132,20 @@ CFL比正则语言大。（允许同时展开两边，不是右线性的）因�
 {{<collapse summary = "思考：PDA的能力局限性">}}
 由于栈的LIFO性质，它其实只能匹配特定性质的语言。对于如
 $$
-\[
+ 
 L=\{wcw:w\in\{a,b\}^*\}
-\]
+  
 $$
 {{</collapse>}}
 
 这样的语言，它就识别不了了。同样的，我们也没法用有限语言写出它的CFG。若考虑如下CFG规则：
 
-$$
-\[
-\boxed{S\rightarrow ScS}
-\]
-\[
-S\rightarrow a\mid b\mid\epsilon
-\]
-$$
+$$S\rightarrow ScS$$
+$$S\rightarrow a\mid b\mid\epsilon$$
 
 第一条规则其实相当于：
 
-$$
-\[
-L(S)\cdot\{c\}\cdot L(S)
-\]
-$$
+$$L(S)\cdot\{c\}\cdot L(S)$$
 
 所以它并不对应wcw这样的语言。
 可以总结出，PDA可识别语言的特定性质包括：
@@ -200,7 +190,7 @@ note：simple PDA，非终结符<q,A,p>
 
 类比于RL的泵定理，也是证明CFL中足够长的字符串必然存在可以重复的部分。也是**必要不充分**条件。
 
-设：$\[G=(V,\Sigma,R,S)\]$是一个 CFG。那么，存在一个长度界限 $N$，使得对于任意满足 $w\in L(G),\quad |w|>N$的字符串，都可以分解为：
+设：$ G=(V,\Sigma,R,S)  $是一个 CFG。那么，存在一个长度界限 $N$，使得对于任意满足 $w\in L(G),\quad |w|>N$的字符串，都可以分解为：
 $${w=uvxyz}$$
 并满足两个条件：
 * 条件一：$v,y$ 至少有一个不是空串。即
