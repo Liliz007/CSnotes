@@ -626,3 +626,68 @@ body { background: var(--page-surface); color: var(--page-ink); }
 /* GenericUnderline */ :root[data-theme="celadon-auto"] .chroma .gl { text-decoration:underline }
 /* TextWhitespace */ :root[data-theme="celadon-auto"] .chroma .w { color:#6e7681 }
 }
+
+/* Course directory and note navigation */
+.directory.directory-tree {
+  margin: 1.5rem auto 2rem;
+  padding: 0;
+}
+.site-main .directory-tree > ul,
+.site-course-notes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.site-main .directory-tree > ul > li {
+  margin: 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+.site-main .directory-node {
+  border: 0;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+}
+.site-main .directory-node > summary {
+  gap: .625rem;
+  padding: .5rem .75rem .5rem 1.75rem;
+  border: 0;
+  margin: 0;
+}
+.site-main .directory-node > summary::before {
+  content: "›";
+}
+.site-main .directory-node[open] > summary::before {
+  transform: rotate(90deg);
+}
+.directory-count {
+  margin-inline-start: auto;
+  white-space: nowrap;
+  font-size: .875em;
+  font-weight: 400;
+}
+.site-main .directory-node[open] > summary,
+.site-main .directory-node > summary:hover,
+.site-main .directory-page:hover,
+.site-course-notes [aria-current="page"] {
+  background: var(--gray-100);
+}
+.site-main .directory-children {
+  margin-inline-start: .85rem;
+  padding-inline-start: .5rem;
+  border-inline-start: 1px solid var(--gray-200);
+}
+.site-main .directory-children ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.site-course-notes .directory-page {
+  display: block;
+  min-height: 0;
+  padding: .35rem .5rem;
+}
+.site-course-notes [aria-current="page"] {
+  border-inline-start: 3px solid var(--page-accent);
+  font-weight: 600;
+}

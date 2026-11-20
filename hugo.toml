@@ -46,3 +46,11 @@ disablePathToLower = true
   name = '大三'
   pageRef = '/大三/'
   weight = 3
+
+[[cascade]]
+  [cascade.target]
+    path = '/directory'
+    kind = 'page'
+  [cascade.build]
+    list = 'never'
+    render = 'never'

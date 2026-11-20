@@ -44,7 +44,7 @@
               <p><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></p>
               <ul>
                 {{ range (where .Pages "Params.bookHidden" "ne" true).ByWeight }}
-                  <li>{{ partial "directory-node.html" . }}</li>
+                  <li>{{ partial "directory-node.html" (dict "page" . "current" $current) }}</li>
                 {{ end }}
               </ul>
             </nav>
@@ -88,15 +88,16 @@
 {{ end }}
 
 {{ define "main" }}
+  {{ $current := . }}
   <article class="markdown book-article">
     {{ if and .IsSection .Parent.IsHome }}
       {{ $entries := (where .Pages "Params.bookHidden" "ne" true).ByWeight }}
       {{ with $entries }}
-        <section class="directory" aria-label="课程目录">
+        <section class="directory directory-tree" aria-label="课程目录">
           <h1>课程目录</h1>
           <ul>
             {{ range . }}
-              <li>{{ partial "directory-node.html" . }}</li>
+              <li>{{ partial "directory-node.html" (dict "page" . "current" $current) }}</li>
             {{ end }}
           </ul>
         </section>
