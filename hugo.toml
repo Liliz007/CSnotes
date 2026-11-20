@@ -15,14 +15,14 @@ disablePathToLower = true
   [markup.tableOfContents]
     startLevel = 1
   [markup.highlight]
-    style = 'github'
+    noClasses = false
 
 [params]
-  # 主题：粉紫配色（lavender），自动明暗切换
-  BookTheme = 'lavender-auto'
+  # 主题：青瓷与秘色，自动明暗切换
+  BookTheme = 'celadon-auto'
   # 侧边栏 logo
   BookLogo = 'avatar.jpg'
-  # 右侧文章目录
+  # 文章目录
   BookToC = true
   # 页面顶部面包屑
   BookBreadcrumbs = true

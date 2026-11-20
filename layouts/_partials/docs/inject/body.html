@@ -1,7 +1,25 @@
 <script src="{{ "katex/katex.min.js" | relURL }}"></script>
 <script src="{{ "katex/auto-render.min.js" | relURL }}"></script>
 <script>
-  renderMathInElement(document.body, {
+  const root = document.documentElement;
+  const button = document.getElementById('site-theme');
+  const system = window.matchMedia('(prefers-color-scheme: dark)');
+  const dark = () => root.dataset.theme === 'celadon-dark' ||
+    (root.dataset.theme === 'celadon-auto' && system.matches);
+  const updateButton = () => { button.textContent = dark() ? '浅色模式' : '深色模式'; };
+  updateButton();
+  system.addEventListener('change', updateButton);
+  button.addEventListener('click', () => {
+    const theme = dark() ? 'light' : 'dark';
+    root.dataset.theme = 'celadon-' + theme;
+    try { localStorage.setItem('liliznotes-theme', theme); } catch {}
+    updateButton();
+  });
+  const toc = document.querySelector('.site-toc');
+  if (toc) toc.open = !window.matchMedia('(max-width: 56rem)').matches;
+
+  const article = document.querySelector('.book-article');
+  if (article && typeof renderMathInElement === 'function') renderMathInElement(article, {
     delimiters: [
       { left: "$$", right: "$$", display: true },
       { left: "$", right: "$", display: false }

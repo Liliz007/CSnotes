@@ -1,1 +1,8 @@
 <link rel="stylesheet" href="{{ "katex/katex.min.css" | relURL }}">
+
+<script>
+  try {
+    const theme = localStorage.getItem('liliznotes-theme');
+    if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = 'celadon-' + theme;
+  } catch {}
+</script>

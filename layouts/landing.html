@@ -1,0 +1,24 @@
+{{ define "menu-container" }}
+<!-- -->
+{{ end }}
+
+{{ define "toc-container" }}
+<!-- -->
+{{ end }}
+
+{{ define "footer" }}
+<!-- -->
+{{ end }}
+
+{{ define "breadcrumbs" }}
+<!-- -->
+{{ end }}
+
+{{ define "main" }}
+<article class="markdown book-article">{{ .Content }}</article>
+{{ $sections := where .Site.Home.Sections "Params.bookHidden" "ne" true }}
+<section class="site-atlas" aria-label="笔记总览">
+  <h2>笔记总览</h2>
+  <p>{{ len $sections }} 个分区 · {{ $total := 0 }}{{ range $sections }}{{ $total = add $total (len (where .RegularPagesRecursive "Params.bookHidden" "ne" true)) }}{{ end }}{{ $total }} 篇笔记</p>
+</section>
+{{ end }}

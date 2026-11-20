@@ -1,7 +1,7 @@
 {{- $page := . -}}
 {{- if $page.IsSection -}}
   <details class="directory-node">
-    <summary>{{ $page.LinkTitle }}</summary>
+    <summary>{{ $page.LinkTitle }} · {{ len (where $page.RegularPagesRecursive "Params.bookHidden" "ne" true) }} 篇</summary>
     <div class="directory-children">
       <ul>
         {{- range (where $page.Pages "Params.bookHidden" "ne" true).ByWeight }}

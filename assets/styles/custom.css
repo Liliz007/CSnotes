@@ -1,6 +1,6 @@
 /* =========================================================
    站点自定义样式
-   主题：粉紫（lavender）——低饱和、高亮度
+   主题：青瓷与秘色（celadon）——低饱和、高亮度
    ========================================================= */
 
 @font-face {
@@ -12,65 +12,65 @@
 
 /* ---------- 主题配色变量 ---------- */
 
-/* 亮色：浅紫底 + 深紫字 + 中紫链接 */
-:root[data-theme="lavender-light"],
-:root[data-theme="lavender-auto"] {
-  --body-background: #faf7fc;
-  --body-font-color: #453a52;
+/* 浅色主题 */
+:root[data-theme="celadon-light"],
+:root[data-theme="celadon-auto"] {
+  --body-background: #EDF2EB;
+  --body-font-color: #243A32;
 
-  --color-link: #8b5fa8;
-  --color-visited-link: #74528f;
+  --color-link: #356452;
+  --color-visited-link: #456854;
 
-  --gray-100: #f3edf8;
-  --gray-200: #e7dcf1;
-  --gray-500: #9b8eab;
+  --gray-100: #E3EBE2;
+  --gray-200: #D5E4D8;
+  --gray-500: #91B5A3;
 
-  --color-accent-default: #9b8eab;
-  --color-accent-note: #8b5fa8;
+  --color-accent-default: #91B5A3;
+  --color-accent-note: #356452;
   --color-accent-tip: #7ba36e;
-  --color-accent-important: #9a6fb3;
+  --color-accent-important: #54775D;
   --color-accent-warning: #c79a5b;
   --color-accent-caution: #c47070;
 }
 
 /* 暗色 */
-:root[data-theme="lavender-dark"] {
-  --body-background: #2b2434;
-  --body-font-color: #e8dff2;
+:root[data-theme="celadon-dark"] {
+  --body-background: #263D37;
+  --body-font-color: #EDF2EB;
   --icon-filter: brightness(0) invert(1);
 
-  --color-link: #c9a3e0;
-  --color-visited-link: #b993d0;
+  --color-link: #A9C5B1;
+  --color-visited-link: #BED4C2;
 
-  --gray-100: #362e42;
-  --gray-200: #463c54;
-  --gray-500: #a99ec0;
+  --gray-100: #304B41;
+  --gray-200: #3A584D;
+  --gray-500: #A9C5B1;
 
-  --color-accent-default: #a99ec0;
-  --color-accent-note: #c9a3e0;
+  --color-accent-default: #A9C5B1;
+  --color-accent-note: #A9C5B1;
   --color-accent-tip: #a4c69a;
-  --color-accent-important: #c9a3e0;
+  --color-accent-important: #A9C5B1;
   --color-accent-warning: #e0b57e;
   --color-accent-caution: #dd9a9a;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root[data-theme="lavender-auto"] {
-    --body-background: #2b2434;
-    --body-font-color: #e8dff2;
+  :root[data-theme="celadon-auto"] {
+    --body-background: #263D37;
+    --body-font-color: #EDF2EB;
     --icon-filter: brightness(0) invert(1);
 
-    --color-link: #c9a3e0;
-    --color-visited-link: #b993d0;
+    --color-link: #A9C5B1;
+    --color-visited-link: #BED4C2;
 
-    --gray-100: #362e42;
-    --gray-200: #463c54;
-    --gray-500: #a99ec0;
+    --gray-100: #304B41;
+    --gray-200: #3A584D;
+    --gray-500: #A9C5B1;
 
-    --color-accent-default: #a99ec0;
-    --color-accent-note: #c9a3e0;
+    --color-accent-default: #A9C5B1;
+    --color-accent-note: #A9C5B1;
     --color-accent-tip: #a4c69a;
-    --color-accent-important: #c9a3e0;
+    --color-accent-important: #A9C5B1;
     --color-accent-warning: #e0b57e;
     --color-accent-caution: #dd9a9a;
   }
@@ -139,8 +139,8 @@ samp {
 /* ---------- 按钮 ---------- */
 .markdown a.book-btn[href] {
   color: #fff;
-  background: #8b5fa8;
-  border-color: #8b5fa8;
+  background: #356452;
+  border-color: #356452;
   border-radius: 0.5rem;
   font-size: 1rem;
   font-weight: 500;
@@ -328,4 +328,282 @@ samp {
 }
 .book-collapse-content > :last-child {
   margin-bottom: 0;
+}
+
+:root[data-theme="celadon-auto"], :root[data-theme="celadon-light"] {
+  color-scheme: light;
+  --page-surface: #EDF2EB;
+  --page-accent: #91B5A3;
+  --page-ink: #243a32;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="celadon-auto"] { color-scheme: dark; --page-surface: #263D37; --page-accent: #A9C5B1; --page-ink: #edf2eb; }
+}
+:root[data-theme="celadon-dark"] {
+  color-scheme: dark;
+  --page-surface: #263D37;
+  --page-accent: #A9C5B1;
+  --page-ink: #edf2eb;
+}
+body { background: var(--page-surface); color: var(--page-ink); }
+.site-header { position: sticky; top: 0; z-index: 10; background: var(--page-surface); border-bottom: 1px solid var(--page-accent); }
+.site-nav { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem 1.25rem; padding: .65rem 1rem; }
+.site-nav a, .site-main .markdown a, .site-main .book-toc a { color: var(--page-ink); text-decoration-color: var(--page-accent); }
+.site-brand { font-weight: 700; }
+.site-nav .book-search { position: relative; flex: 1 1 12rem; margin: 0; }
+.site-nav #book-search-results:not(:empty) { position: absolute; top: 100%; width: 100%; margin: 0; padding: .75rem; list-style: none; background: var(--page-surface); border: 1px solid var(--page-accent); max-height: 60vh; overflow: auto; }
+.site-nav input, #site-theme { color: var(--page-ink); background: var(--page-surface); border: 1px solid var(--page-accent); border-radius: .35rem; padding: .4rem .65rem; }
+#site-theme { cursor: pointer; }
+.site-main .book-page { min-width: 0; }
+.site-main .book-toc { order: -1; border-inline-end: 1px solid var(--page-accent); }
+.site-main .book-toc-content { top: 4rem; }
+.site-main .markdown :is(h1,h2,h3,h4,h5,h6) { scroll-margin-top: 8rem; }
+.site-main .markdown .katex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding-block: .25rem; }
+@media (max-width: 56rem) {
+  .site-main { display: block; }
+  .site-main .book-toc { display: block; width: auto; padding-inline: 1rem; border: 0; }
+  .site-main .book-toc-content { position: static; width: auto; height: auto; max-height: 35vh; padding: .75rem 0; }
+}
+
+/* Hugo syntax highlighting */
+/* Generated using: hugo gen chromastyles --style=github */
+
+/* Background */ .bg { background-color:#f7f7f7; }
+/* PreWrapper */ .chroma { background-color:#f7f7f7;-webkit-text-size-adjust:none; }
+/* Error */ .chroma .err { color:#f6f8fa;background-color:#82071e }
+/* LineLink */ .chroma .lnlinks { outline:none;text-decoration:none;color:inherit }
+/* LineTableTD */ .chroma .lntd { vertical-align:top;padding:0;margin:0;border:0; }
+/* LineTable */ .chroma .lntable { border-spacing:0;padding:0;margin:0;border:0; }
+/* LineHighlight */ .chroma .hl { background-color:#dedede }
+/* LineNumbersTable */ .chroma .lnt { white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f }
+/* LineNumbers */ .chroma .ln { white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f }
+/* Line */ .chroma .line { display:flex; }
+/* Keyword */ .chroma .k { color:#cf222e }
+/* KeywordConstant */ .chroma .kc { color:#cf222e }
+/* KeywordDeclaration */ .chroma .kd { color:#cf222e }
+/* KeywordNamespace */ .chroma .kn { color:#cf222e }
+/* KeywordPseudo */ .chroma .kp { color:#cf222e }
+/* KeywordReserved */ .chroma .kr { color:#cf222e }
+/* KeywordType */ .chroma .kt { color:#cf222e }
+/* NameAttribute */ .chroma .na { color:#1f2328 }
+/* NameClass */ .chroma .nc { color:#1f2328 }
+/* NameConstant */ .chroma .no { color:#0550ae }
+/* NameDecorator */ .chroma .nd { color:#0550ae }
+/* NameEntity */ .chroma .ni { color:#6639ba }
+/* NameLabel */ .chroma .nl { color:#900;font-weight:bold }
+/* NameNamespace */ .chroma .nn { color:#24292e }
+/* NameOther */ .chroma .nx { color:#1f2328 }
+/* NameTag */ .chroma .nt { color:#0550ae }
+/* NameBuiltin */ .chroma .nb { color:#6639ba }
+/* NameBuiltinPseudo */ .chroma .bp { color:#6a737d }
+/* NameVariable */ .chroma .nv { color:#953800 }
+/* NameVariableClass */ .chroma .vc { color:#953800 }
+/* NameVariableGlobal */ .chroma .vg { color:#953800 }
+/* NameVariableInstance */ .chroma .vi { color:#953800 }
+/* NameVariableMagic */ .chroma .vm { color:#953800 }
+/* NameFunction */ .chroma .nf { color:#6639ba }
+/* NameFunctionMagic */ .chroma .fm { color:#6639ba }
+/* LiteralString */ .chroma .s { color:#0a3069 }
+/* LiteralStringAffix */ .chroma .sa { color:#0a3069 }
+/* LiteralStringBacktick */ .chroma .sb { color:#0a3069 }
+/* LiteralStringChar */ .chroma .sc { color:#0a3069 }
+/* LiteralStringDelimiter */ .chroma .dl { color:#0a3069 }
+/* LiteralStringDoc */ .chroma .sd { color:#0a3069 }
+/* LiteralStringDouble */ .chroma .s2 { color:#0a3069 }
+/* LiteralStringEscape */ .chroma .se { color:#0a3069 }
+/* LiteralStringHeredoc */ .chroma .sh { color:#0a3069 }
+/* LiteralStringInterpol */ .chroma .si { color:#0a3069 }
+/* LiteralStringOther */ .chroma .sx { color:#0a3069 }
+/* LiteralStringRegex */ .chroma .sr { color:#0a3069 }
+/* LiteralStringSingle */ .chroma .s1 { color:#0a3069 }
+/* LiteralStringSymbol */ .chroma .ss { color:#032f62 }
+/* LiteralNumber */ .chroma .m { color:#0550ae }
+/* LiteralNumberBin */ .chroma .mb { color:#0550ae }
+/* LiteralNumberFloat */ .chroma .mf { color:#0550ae }
+/* LiteralNumberHex */ .chroma .mh { color:#0550ae }
+/* LiteralNumberInteger */ .chroma .mi { color:#0550ae }
+/* LiteralNumberIntegerLong */ .chroma .il { color:#0550ae }
+/* LiteralNumberOct */ .chroma .mo { color:#0550ae }
+/* Operator */ .chroma .o { color:#0550ae }
+/* OperatorWord */ .chroma .ow { color:#0550ae }
+/* OperatorReserved */ .chroma .or { color:#0550ae }
+/* Punctuation */ .chroma .p { color:#1f2328 }
+/* Comment */ .chroma .c { color:#57606a }
+/* CommentHashbang */ .chroma .ch { color:#57606a }
+/* CommentMultiline */ .chroma .cm { color:#57606a }
+/* CommentSingle */ .chroma .c1 { color:#57606a }
+/* CommentSpecial */ .chroma .cs { color:#57606a }
+/* CommentPreproc */ .chroma .cp { color:#57606a }
+/* CommentPreprocFile */ .chroma .cpf { color:#57606a }
+/* GenericDeleted */ .chroma .gd { color:#82071e;background-color:#ffebe9 }
+/* GenericEmph */ .chroma .ge { color:#1f2328 }
+/* GenericInserted */ .chroma .gi { color:#116329;background-color:#dafbe1 }
+/* GenericOutput */ .chroma .go { color:#1f2328 }
+/* GenericUnderline */ .chroma .gl { text-decoration:underline }
+/* TextWhitespace */ .chroma .w { color:#fff }
+
+/* Generated using: hugo gen chromastyles --style=github-dark */
+
+/* Background */ .bg { color:#e6edf3;background-color:#0d1117; }
+/* PreWrapper */ :root[data-theme="celadon-dark"] .chroma { color:#e6edf3;background-color:#0d1117;-webkit-text-size-adjust:none; }
+/* Error */ :root[data-theme="celadon-dark"] .chroma .err { color:#f85149 }
+/* LineLink */ :root[data-theme="celadon-dark"] .chroma .lnlinks { outline:none;text-decoration:none;color:inherit }
+/* LineTableTD */ :root[data-theme="celadon-dark"] .chroma .lntd { vertical-align:top;padding:0;margin:0;border:0; }
+/* LineTable */ :root[data-theme="celadon-dark"] .chroma .lntable { border-spacing:0;padding:0;margin:0;border:0; }
+/* LineHighlight */ :root[data-theme="celadon-dark"] .chroma .hl { background-color:#6e7681 }
+/* LineNumbersTable */ :root[data-theme="celadon-dark"] .chroma .lnt { white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679 }
+/* LineNumbers */ :root[data-theme="celadon-dark"] .chroma .ln { white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#6e7681 }
+/* Line */ :root[data-theme="celadon-dark"] .chroma .line { display:flex; }
+/* Keyword */ :root[data-theme="celadon-dark"] .chroma .k { color:#ff7b72 }
+/* KeywordConstant */ :root[data-theme="celadon-dark"] .chroma .kc { color:#79c0ff }
+/* KeywordDeclaration */ :root[data-theme="celadon-dark"] .chroma .kd { color:#ff7b72 }
+/* KeywordNamespace */ :root[data-theme="celadon-dark"] .chroma .kn { color:#ff7b72 }
+/* KeywordPseudo */ :root[data-theme="celadon-dark"] .chroma .kp { color:#79c0ff }
+/* KeywordReserved */ :root[data-theme="celadon-dark"] .chroma .kr { color:#ff7b72 }
+/* KeywordType */ :root[data-theme="celadon-dark"] .chroma .kt { color:#ff7b72 }
+/* NameClass */ :root[data-theme="celadon-dark"] .chroma .nc { color:#f0883e;font-weight:bold }
+/* NameConstant */ :root[data-theme="celadon-dark"] .chroma .no { color:#79c0ff;font-weight:bold }
+/* NameDecorator */ :root[data-theme="celadon-dark"] .chroma .nd { color:#d2a8ff;font-weight:bold }
+/* NameEntity */ :root[data-theme="celadon-dark"] .chroma .ni { color:#ffa657 }
+/* NameException */ :root[data-theme="celadon-dark"] .chroma .ne { color:#f0883e;font-weight:bold }
+/* NameLabel */ :root[data-theme="celadon-dark"] .chroma .nl { color:#79c0ff;font-weight:bold }
+/* NameNamespace */ :root[data-theme="celadon-dark"] .chroma .nn { color:#ff7b72 }
+/* NameOther */ :root[data-theme="celadon-dark"] .chroma .nx { color:#e6edf3 }
+/* NameProperty */ :root[data-theme="celadon-dark"] .chroma .py { color:#79c0ff }
+/* NameTag */ :root[data-theme="celadon-dark"] .chroma .nt { color:#7ee787 }
+/* NameVariable */ :root[data-theme="celadon-dark"] .chroma .nv { color:#79c0ff }
+/* NameVariableClass */ :root[data-theme="celadon-dark"] .chroma .vc { color:#79c0ff }
+/* NameVariableGlobal */ :root[data-theme="celadon-dark"] .chroma .vg { color:#79c0ff }
+/* NameVariableInstance */ :root[data-theme="celadon-dark"] .chroma .vi { color:#79c0ff }
+/* NameVariableMagic */ :root[data-theme="celadon-dark"] .chroma .vm { color:#79c0ff }
+/* NameFunction */ :root[data-theme="celadon-dark"] .chroma .nf { color:#d2a8ff;font-weight:bold }
+/* NameFunctionMagic */ :root[data-theme="celadon-dark"] .chroma .fm { color:#d2a8ff;font-weight:bold }
+/* Literal */ :root[data-theme="celadon-dark"] .chroma .l { color:#a5d6ff }
+/* LiteralDate */ :root[data-theme="celadon-dark"] .chroma .ld { color:#79c0ff }
+/* LiteralString */ :root[data-theme="celadon-dark"] .chroma .s { color:#a5d6ff }
+/* LiteralStringAffix */ :root[data-theme="celadon-dark"] .chroma .sa { color:#79c0ff }
+/* LiteralStringBacktick */ :root[data-theme="celadon-dark"] .chroma .sb { color:#a5d6ff }
+/* LiteralStringChar */ :root[data-theme="celadon-dark"] .chroma .sc { color:#a5d6ff }
+/* LiteralStringDelimiter */ :root[data-theme="celadon-dark"] .chroma .dl { color:#79c0ff }
+/* LiteralStringDoc */ :root[data-theme="celadon-dark"] .chroma .sd { color:#a5d6ff }
+/* LiteralStringDouble */ :root[data-theme="celadon-dark"] .chroma .s2 { color:#a5d6ff }
+/* LiteralStringEscape */ :root[data-theme="celadon-dark"] .chroma .se { color:#79c0ff }
+/* LiteralStringHeredoc */ :root[data-theme="celadon-dark"] .chroma .sh { color:#79c0ff }
+/* LiteralStringInterpol */ :root[data-theme="celadon-dark"] .chroma .si { color:#a5d6ff }
+/* LiteralStringOther */ :root[data-theme="celadon-dark"] .chroma .sx { color:#a5d6ff }
+/* LiteralStringRegex */ :root[data-theme="celadon-dark"] .chroma .sr { color:#79c0ff }
+/* LiteralStringSingle */ :root[data-theme="celadon-dark"] .chroma .s1 { color:#a5d6ff }
+/* LiteralStringSymbol */ :root[data-theme="celadon-dark"] .chroma .ss { color:#a5d6ff }
+/* LiteralNumber */ :root[data-theme="celadon-dark"] .chroma .m { color:#a5d6ff }
+/* LiteralNumberBin */ :root[data-theme="celadon-dark"] .chroma .mb { color:#a5d6ff }
+/* LiteralNumberFloat */ :root[data-theme="celadon-dark"] .chroma .mf { color:#a5d6ff }
+/* LiteralNumberHex */ :root[data-theme="celadon-dark"] .chroma .mh { color:#a5d6ff }
+/* LiteralNumberInteger */ :root[data-theme="celadon-dark"] .chroma .mi { color:#a5d6ff }
+/* LiteralNumberIntegerLong */ :root[data-theme="celadon-dark"] .chroma .il { color:#a5d6ff }
+/* LiteralNumberOct */ :root[data-theme="celadon-dark"] .chroma .mo { color:#a5d6ff }
+/* Operator */ :root[data-theme="celadon-dark"] .chroma .o { color:#ff7b72;font-weight:bold }
+/* OperatorWord */ :root[data-theme="celadon-dark"] .chroma .ow { color:#ff7b72;font-weight:bold }
+/* OperatorReserved */ :root[data-theme="celadon-dark"] .chroma .or { color:#ff7b72;font-weight:bold }
+/* Comment */ :root[data-theme="celadon-dark"] .chroma .c { color:#8b949e;font-style:italic }
+/* CommentHashbang */ :root[data-theme="celadon-dark"] .chroma .ch { color:#8b949e;font-style:italic }
+/* CommentMultiline */ :root[data-theme="celadon-dark"] .chroma .cm { color:#8b949e;font-style:italic }
+/* CommentSingle */ :root[data-theme="celadon-dark"] .chroma .c1 { color:#8b949e;font-style:italic }
+/* CommentSpecial */ :root[data-theme="celadon-dark"] .chroma .cs { color:#8b949e;font-weight:bold;font-style:italic }
+/* CommentPreproc */ :root[data-theme="celadon-dark"] .chroma .cp { color:#8b949e;font-weight:bold;font-style:italic }
+/* CommentPreprocFile */ :root[data-theme="celadon-dark"] .chroma .cpf { color:#8b949e;font-weight:bold;font-style:italic }
+/* GenericDeleted */ :root[data-theme="celadon-dark"] .chroma .gd { color:#ffa198;background-color:#490202 }
+/* GenericEmph */ :root[data-theme="celadon-dark"] .chroma .ge { font-style:italic }
+/* GenericError */ :root[data-theme="celadon-dark"] .chroma .gr { color:#ffa198 }
+/* GenericHeading */ :root[data-theme="celadon-dark"] .chroma .gh { color:#79c0ff;font-weight:bold }
+/* GenericInserted */ :root[data-theme="celadon-dark"] .chroma .gi { color:#56d364;background-color:#0f5323 }
+/* GenericOutput */ :root[data-theme="celadon-dark"] .chroma .go { color:#8b949e }
+/* GenericPrompt */ :root[data-theme="celadon-dark"] .chroma .gp { color:#8b949e }
+/* GenericStrong */ :root[data-theme="celadon-dark"] .chroma .gs { font-weight:bold }
+/* GenericSubheading */ :root[data-theme="celadon-dark"] .chroma .gu { color:#79c0ff }
+/* GenericTraceback */ :root[data-theme="celadon-dark"] .chroma .gt { color:#ff7b72 }
+/* GenericUnderline */ :root[data-theme="celadon-dark"] .chroma .gl { text-decoration:underline }
+/* TextWhitespace */ :root[data-theme="celadon-dark"] .chroma .w { color:#6e7681 }
+
+@media (prefers-color-scheme: dark) {
+/* Generated using: hugo gen chromastyles --style=github-dark */
+
+/* Background */ .bg { color:#e6edf3;background-color:#0d1117; }
+/* PreWrapper */ :root[data-theme="celadon-auto"] .chroma { color:#e6edf3;background-color:#0d1117;-webkit-text-size-adjust:none; }
+/* Error */ :root[data-theme="celadon-auto"] .chroma .err { color:#f85149 }
+/* LineLink */ :root[data-theme="celadon-auto"] .chroma .lnlinks { outline:none;text-decoration:none;color:inherit }
+/* LineTableTD */ :root[data-theme="celadon-auto"] .chroma .lntd { vertical-align:top;padding:0;margin:0;border:0; }
+/* LineTable */ :root[data-theme="celadon-auto"] .chroma .lntable { border-spacing:0;padding:0;margin:0;border:0; }
+/* LineHighlight */ :root[data-theme="celadon-auto"] .chroma .hl { background-color:#6e7681 }
+/* LineNumbersTable */ :root[data-theme="celadon-auto"] .chroma .lnt { white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679 }
+/* LineNumbers */ :root[data-theme="celadon-auto"] .chroma .ln { white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#6e7681 }
+/* Line */ :root[data-theme="celadon-auto"] .chroma .line { display:flex; }
+/* Keyword */ :root[data-theme="celadon-auto"] .chroma .k { color:#ff7b72 }
+/* KeywordConstant */ :root[data-theme="celadon-auto"] .chroma .kc { color:#79c0ff }
+/* KeywordDeclaration */ :root[data-theme="celadon-auto"] .chroma .kd { color:#ff7b72 }
+/* KeywordNamespace */ :root[data-theme="celadon-auto"] .chroma .kn { color:#ff7b72 }
+/* KeywordPseudo */ :root[data-theme="celadon-auto"] .chroma .kp { color:#79c0ff }
+/* KeywordReserved */ :root[data-theme="celadon-auto"] .chroma .kr { color:#ff7b72 }
+/* KeywordType */ :root[data-theme="celadon-auto"] .chroma .kt { color:#ff7b72 }
+/* NameClass */ :root[data-theme="celadon-auto"] .chroma .nc { color:#f0883e;font-weight:bold }
+/* NameConstant */ :root[data-theme="celadon-auto"] .chroma .no { color:#79c0ff;font-weight:bold }
+/* NameDecorator */ :root[data-theme="celadon-auto"] .chroma .nd { color:#d2a8ff;font-weight:bold }
+/* NameEntity */ :root[data-theme="celadon-auto"] .chroma .ni { color:#ffa657 }
+/* NameException */ :root[data-theme="celadon-auto"] .chroma .ne { color:#f0883e;font-weight:bold }
+/* NameLabel */ :root[data-theme="celadon-auto"] .chroma .nl { color:#79c0ff;font-weight:bold }
+/* NameNamespace */ :root[data-theme="celadon-auto"] .chroma .nn { color:#ff7b72 }
+/* NameOther */ :root[data-theme="celadon-auto"] .chroma .nx { color:#e6edf3 }
+/* NameProperty */ :root[data-theme="celadon-auto"] .chroma .py { color:#79c0ff }
+/* NameTag */ :root[data-theme="celadon-auto"] .chroma .nt { color:#7ee787 }
+/* NameVariable */ :root[data-theme="celadon-auto"] .chroma .nv { color:#79c0ff }
+/* NameVariableClass */ :root[data-theme="celadon-auto"] .chroma .vc { color:#79c0ff }
+/* NameVariableGlobal */ :root[data-theme="celadon-auto"] .chroma .vg { color:#79c0ff }
+/* NameVariableInstance */ :root[data-theme="celadon-auto"] .chroma .vi { color:#79c0ff }
+/* NameVariableMagic */ :root[data-theme="celadon-auto"] .chroma .vm { color:#79c0ff }
+/* NameFunction */ :root[data-theme="celadon-auto"] .chroma .nf { color:#d2a8ff;font-weight:bold }
+/* NameFunctionMagic */ :root[data-theme="celadon-auto"] .chroma .fm { color:#d2a8ff;font-weight:bold }
+/* Literal */ :root[data-theme="celadon-auto"] .chroma .l { color:#a5d6ff }
+/* LiteralDate */ :root[data-theme="celadon-auto"] .chroma .ld { color:#79c0ff }
+/* LiteralString */ :root[data-theme="celadon-auto"] .chroma .s { color:#a5d6ff }
+/* LiteralStringAffix */ :root[data-theme="celadon-auto"] .chroma .sa { color:#79c0ff }
+/* LiteralStringBacktick */ :root[data-theme="celadon-auto"] .chroma .sb { color:#a5d6ff }
+/* LiteralStringChar */ :root[data-theme="celadon-auto"] .chroma .sc { color:#a5d6ff }
+/* LiteralStringDelimiter */ :root[data-theme="celadon-auto"] .chroma .dl { color:#79c0ff }
+/* LiteralStringDoc */ :root[data-theme="celadon-auto"] .chroma .sd { color:#a5d6ff }
+/* LiteralStringDouble */ :root[data-theme="celadon-auto"] .chroma .s2 { color:#a5d6ff }
+/* LiteralStringEscape */ :root[data-theme="celadon-auto"] .chroma .se { color:#79c0ff }
+/* LiteralStringHeredoc */ :root[data-theme="celadon-auto"] .chroma .sh { color:#79c0ff }
+/* LiteralStringInterpol */ :root[data-theme="celadon-auto"] .chroma .si { color:#a5d6ff }
+/* LiteralStringOther */ :root[data-theme="celadon-auto"] .chroma .sx { color:#a5d6ff }
+/* LiteralStringRegex */ :root[data-theme="celadon-auto"] .chroma .sr { color:#79c0ff }
+/* LiteralStringSingle */ :root[data-theme="celadon-auto"] .chroma .s1 { color:#a5d6ff }
+/* LiteralStringSymbol */ :root[data-theme="celadon-auto"] .chroma .ss { color:#a5d6ff }
+/* LiteralNumber */ :root[data-theme="celadon-auto"] .chroma .m { color:#a5d6ff }
+/* LiteralNumberBin */ :root[data-theme="celadon-auto"] .chroma .mb { color:#a5d6ff }
+/* LiteralNumberFloat */ :root[data-theme="celadon-auto"] .chroma .mf { color:#a5d6ff }
+/* LiteralNumberHex */ :root[data-theme="celadon-auto"] .chroma .mh { color:#a5d6ff }
+/* LiteralNumberInteger */ :root[data-theme="celadon-auto"] .chroma .mi { color:#a5d6ff }
+/* LiteralNumberIntegerLong */ :root[data-theme="celadon-auto"] .chroma .il { color:#a5d6ff }
+/* LiteralNumberOct */ :root[data-theme="celadon-auto"] .chroma .mo { color:#a5d6ff }
+/* Operator */ :root[data-theme="celadon-auto"] .chroma .o { color:#ff7b72;font-weight:bold }
+/* OperatorWord */ :root[data-theme="celadon-auto"] .chroma .ow { color:#ff7b72;font-weight:bold }
+/* OperatorReserved */ :root[data-theme="celadon-auto"] .chroma .or { color:#ff7b72;font-weight:bold }
+/* Comment */ :root[data-theme="celadon-auto"] .chroma .c { color:#8b949e;font-style:italic }
+/* CommentHashbang */ :root[data-theme="celadon-auto"] .chroma .ch { color:#8b949e;font-style:italic }
+/* CommentMultiline */ :root[data-theme="celadon-auto"] .chroma .cm { color:#8b949e;font-style:italic }
+/* CommentSingle */ :root[data-theme="celadon-auto"] .chroma .c1 { color:#8b949e;font-style:italic }
+/* CommentSpecial */ :root[data-theme="celadon-auto"] .chroma .cs { color:#8b949e;font-weight:bold;font-style:italic }
+/* CommentPreproc */ :root[data-theme="celadon-auto"] .chroma .cp { color:#8b949e;font-weight:bold;font-style:italic }
+/* CommentPreprocFile */ :root[data-theme="celadon-auto"] .chroma .cpf { color:#8b949e;font-weight:bold;font-style:italic }
+/* GenericDeleted */ :root[data-theme="celadon-auto"] .chroma .gd { color:#ffa198;background-color:#490202 }
+/* GenericEmph */ :root[data-theme="celadon-auto"] .chroma .ge { font-style:italic }
+/* GenericError */ :root[data-theme="celadon-auto"] .chroma .gr { color:#ffa198 }
+/* GenericHeading */ :root[data-theme="celadon-auto"] .chroma .gh { color:#79c0ff;font-weight:bold }
+/* GenericInserted */ :root[data-theme="celadon-auto"] .chroma .gi { color:#56d364;background-color:#0f5323 }
+/* GenericOutput */ :root[data-theme="celadon-auto"] .chroma .go { color:#8b949e }
+/* GenericPrompt */ :root[data-theme="celadon-auto"] .chroma .gp { color:#8b949e }
+/* GenericStrong */ :root[data-theme="celadon-auto"] .chroma .gs { font-weight:bold }
+/* GenericSubheading */ :root[data-theme="celadon-auto"] .chroma .gu { color:#79c0ff }
+/* GenericTraceback */ :root[data-theme="celadon-auto"] .chroma .gt { color:#ff7b72 }
+/* GenericUnderline */ :root[data-theme="celadon-auto"] .chroma .gl { text-decoration:underline }
+/* TextWhitespace */ :root[data-theme="celadon-auto"] .chroma .w { color:#6e7681 }
 }

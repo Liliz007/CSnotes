@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="{{ default .Site.Language.Name .Site.Language.Locale }}" dir="{{ default "ltr" .Site.Language.Direction }}" data-theme="{{ default "light" .Site.Params.BookTheme }}">
+<head>
+  {{ partial "docs/html-head" . }}
+  {{ partial "docs/inject/head" . }}
+</head>
+<body dir="{{ default "ltr" .Site.Language.Direction }}" class="book-kind-{{ .Kind }} book-type-{{ .Type }}{{ with .Layout }} book-layout-{{ . }}{{ end }}">
+  {{ partial "site-header" . }}
+  <main class="container flex site-main">
+    {{ template "toc-container" . }}
+
+
+
+    <div class="book-page">
+      {{ partial "docs/inject/content-before" . }}
+      {{ template "breadcrumbs" . }}
+      {{ template "main" . }} <!-- Page Content -->
+      {{ partial "docs/inject/content-after" . }}
+
+      <footer class="book-footer">
+        {{ template "footer" . }} <!-- Footer under page content -->
+        {{ template "comments" . }} <!-- Comments block -->
+        {{ partial "docs/inject/footer" . }}
+        {{ template "copyright" . }} <!-- Copyright block -->
+        {{ template "clipboard" . }}
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay" aria-hidden="true"></label>
+    </div>
+
+
+  </main>
+
+  {{ partial "docs/inject/body" . }}
+</body>
+</html>
+
+{{ define "menu-container" }}
+<aside class="book-menu">
+  <div class="book-menu-content">
+    {{ template "menu" . }}
+  </div>
+</aside>
+{{ end }}
+
+{{ define "menu" }}
+  {{ partial "docs/menu" . }}
+{{ end }}
+
+{{ define "header" }}
+  {{ partial "docs/header" . }}
+{{ end }}
+
+{{ define "breadcrumbs" }}
+  {{ if .Param "BookBreadcrumbs" | default false }}
+  {{ partial "docs/breadcrumbs" . }}
+  {{ end }}
+{{ end }}
+
+{{ define "footer" }}
+  {{ partial "docs/footer" . }}
+{{ end }}
+
+{{ define "clipboard" }}
+  {{ with resources.Get "clipboard.js" | resources.Minify }}
+    <script>{{ .Content | safeJS }}</script>
+  {{ end }}
+{{ end }}
+
+{{ define "copyright" }}
+  {{ if or .Site.Copyright .Params.Copyright }}
+  <div class="book-copyright flex justify-center">
+    {{ partial "docs/copyright" . }}
+  </div>
+  {{ end }}
+{{ end }}
+
+{{ define "comments" }}
+  {{ if and .Content (.Param "BookComments") }}
+  <div class="book-comments">
+    {{- partial "docs/comments" . -}}
+  </div>
+  {{ end }}
+{{ end }}
+
+{{ define "main" }}
+  <article class="markdown book-article">
+    {{- .Content -}}
+  </article>
+{{ end }}
+
+{{ define "toc-container" }}
+  {{ if and .IsPage (in .TableOfContents "<a ") (.Param "BookToC" | default true) }}
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      <details class="site-toc"><summary>本文目录</summary>{{ template "toc" . }}</details>
+    </div>
+  </aside>
+  {{ end }}
+{{ end }}
+
+{{ define "toc" }}
+  {{ partial "docs/toc" . }}
+{{ end }}
