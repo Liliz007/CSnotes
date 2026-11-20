@@ -57,7 +57,12 @@
 
 {{ define "breadcrumbs" }}
   {{ if .Param "BookBreadcrumbs" | default false }}
-  {{ partial "docs/breadcrumbs" . }}
+  {{ $breadcrumbs := partial "docs/breadcrumbs" . }}
+  {{ with .Site.GetPage "/directory" }}
+    {{ replace $breadcrumbs `href=""` (printf `href="%s"` .RelPermalink) | safeHTML }}
+  {{ else }}
+    {{ $breadcrumbs }}
+  {{ end }}
   {{ end }}
 {{ end }}
 
@@ -88,23 +93,8 @@
 {{ end }}
 
 {{ define "main" }}
-  {{ $current := . }}
   <article class="markdown book-article">
-    {{ if and .IsSection .Parent.IsHome }}
-      {{ $entries := (where .Pages "Params.bookHidden" "ne" true).ByWeight }}
-      {{ with $entries }}
-        <section class="directory directory-tree" aria-label="课程目录">
-          <h1>课程目录</h1>
-          <ul>
-            {{ range . }}
-              <li>{{ partial "directory-node.html" (dict "page" . "current" $current) }}</li>
-            {{ end }}
-          </ul>
-        </section>
-      {{ end }}
-    {{ else }}
-      {{- .Content -}}
-    {{ end }}
+    {{- .Content -}}
   </article>
 {{ end }}
 

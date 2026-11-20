@@ -31,26 +31,17 @@ disablePathToLower = true
   # 全文搜索（含中文分词）
   BookSearch = true
 
-# 首页（landing 布局）顶部导航
-[[menu.home]]
-  name = '大一'
-  pageRef = '/大一/'
-  weight = 1
-
-[[menu.home]]
-  name = '大二'
-  pageRef = '/大二/'
-  weight = 2
-
-[[menu.home]]
-  name = '大三'
-  pageRef = '/大三/'
-  weight = 3
+# 保留年级分区以组织课程，只发布统一目录。
+[[cascade]]
+  [cascade.target]
+    path = '/大二'
+    kind = 'section'
+  [cascade.build]
+    render = 'never'
 
 [[cascade]]
   [cascade.target]
-    path = '/directory'
-    kind = 'page'
+    path = '/大三'
+    kind = 'section'
   [cascade.build]
-    list = 'never'
     render = 'never'

@@ -1,9 +1,7 @@
 <header class="site-header">
   <nav class="site-nav container" aria-label="主导航">
     <a class="site-brand" href="{{ .Site.Home.RelPermalink }}">LilizNotes</a>
-    {{ range .Site.Menus.home }}
-      {{ with .Page }}{{ if not .Params.bookHidden }}<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}{{ end }}
-    {{ end }}
+    {{ with .Site.GetPage "/directory" }}<a href="{{ .RelPermalink }}">笔记目录</a>{{ end }}
     {{ partial "docs/search" . }}
     <button type="button" id="site-theme">切换主题</button>
   </nav>

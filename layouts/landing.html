@@ -15,15 +15,5 @@
 {{ end }}
 
 {{ define "main" }}
-<article class="markdown book-article">{{ replaceRE `(<a class="book-btn" )href=""(\s*>开始阅读)` `${1}href="#course-atlas"${2}` .Content | safeHTML }}</article>
-{{ $sections := where .Site.Home.Sections "Params.bookHidden" "ne" true }}
-<section id="course-atlas" class="site-atlas" aria-label="笔记总览">
-  <h2>笔记总览</h2>
-  <p>{{ len $sections }} 个分区 · {{ $total := 0 }}{{ range $sections }}{{ $total = add $total (len (where .RegularPagesRecursive "Params.bookHidden" "ne" true)) }}{{ end }}{{ $total }} 篇笔记</p>
-  <ul>
-    {{ range $sections.ByWeight }}
-      <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
-    {{ end }}
-  </ul>
-</section>
+<article class="markdown book-article">{{ .Content }}</article>
 {{ end }}
