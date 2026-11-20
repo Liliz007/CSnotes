@@ -1,3 +1,8 @@
+---
+title: ch3 CFL与PDA
+weight: 3
+---
+
 语言强度图示：
 
 ![](image/2026-11-19-20-22-13.png)
@@ -293,9 +298,48 @@ while there is a rule B -> C with B in D(A) and C not in D(A) do
 
 **故做一次转换，总复杂度为O(n^2)**
 
-结论：如果一个 CNF 生成的字符串长度为n，且 n>=1 ，那么它恰好需要2n-1步推导
+**重要结论：** 如果一个 CNF 生成的字符串长度为n，且 n>=1 ，那么它恰好需要2n-1步推导
+- 其中有n-1步用规则2（分叉）推导，n步用规则三（单步终结）推导
 - 直接数叶子个数为n的满二叉树的内部结点数即可。
 
-### 判断一个字符串是否属于CFG
+### 判断一个字符串是否属于CFG——CYK
 
-使用动态规划的方法。
+CYK算法（即Cocke–Younger–Kasami Algorithm）使用动态规划的方法。
+
+从输入的字符串开始，记为x1x2....xn，设Nij为能生成从xi到xj这一子串非终结符集合。
+- 从字串长度为1开始，逐个找Nij
+- 然后逐层拼接，若最终N1n是S，则表示这个字符串能被当前CFG生成（这是充要条件）
+
+```
+for i = 1 to n:
+    N[i][i] = {A | A -> x[i]}
+
+for len = 2 to n:
+    for i = 1 to n-len+1:
+        j = i+len-1 //子串的末尾
+
+        for k = i to j-1: //枚举分割位置
+            for each rule A -> BC:
+                if B in N[i][k] and C in N[k+1][j]:
+                    add A to N[i][j]
+
+if S in N[1][n]:
+    accept
+else:
+    reject
+```
+
+有三层循环，显然是$O(n^3)$的。
+
+## 6.2 判定CFL
+
+不存在判断任意语言是否为 CFL 的算法
+
+证明语言是CFL：
+- Finite：有限语言一定是 CFL。
+- Construct CFG/PDA：直接构造 CFG 或 PDA。
+- Closure Properties：利用 CFL 的闭包性质。
+证明语言不是CFL：
+- Pumping Theorem
+- Closure Properties：用闭包性质反证
+- Intersection with RL：与一个RL求交，反证
