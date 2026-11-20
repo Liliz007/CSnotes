@@ -8,7 +8,6 @@
       <span class="directory-count">{{ len $notes }} 篇</span>
     </summary>
     <div class="directory-children">
-      {{ with $page.RelPermalink }}<a class="directory-page" href="{{ . }}"{{ if eq $page $current }} aria-current="page"{{ end }}>查看{{ $page.LinkTitle }}</a>{{ end }}
       <ul>
         {{- range (where $page.Pages "Params.bookHidden" "ne" true).ByWeight }}
           <li>{{ partial "directory-node.html" (dict "page" . "current" $current) }}</li>

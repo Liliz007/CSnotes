@@ -45,3 +45,11 @@ disablePathToLower = true
     kind = 'section'
   [cascade.build]
     render = 'never'
+
+# 课程在目录中展开，课程索引页无需发布。
+[[cascade]]
+  [cascade.target]
+    path = '/{大二,大三}/*'
+    kind = 'section'
+  [cascade.build]
+    render = 'never'

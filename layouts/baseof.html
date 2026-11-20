@@ -41,7 +41,7 @@
         <aside class="site-course-sidebar" aria-label="课程笔记">
           <div class="site-course-notes">
             <nav aria-label="{{ .LinkTitle }}">
-              <p><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></p>
+              <p>{{ .LinkTitle }}</p>
               <ul>
                 {{ range (where .Pages "Params.bookHidden" "ne" true).ByWeight }}
                   <li>{{ partial "directory-node.html" (dict "page" . "current" $current) }}</li>
