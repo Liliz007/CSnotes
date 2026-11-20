@@ -39,8 +39,7 @@
     {{ range where .Sections "Params.bookHidden" "ne" true }}
       {{ if or (eq . $current) (.IsAncestor $current) }}
         <aside class="site-course-sidebar" aria-label="课程笔记">
-          <details class="site-course-notes" open>
-            <summary>课程笔记</summary>
+          <div class="site-course-notes">
             <nav aria-label="{{ .LinkTitle }}">
               <p><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></p>
               <ul>
@@ -49,7 +48,7 @@
                 {{ end }}
               </ul>
             </nav>
-          </details>
+          </div>
         </aside>
       {{ end }}
     {{ end }}
@@ -90,12 +89,11 @@
 
 {{ define "main" }}
   <article class="markdown book-article">
-    {{- .Content -}}
     {{ if and .IsSection .Parent.IsHome }}
       {{ $entries := (where .Pages "Params.bookHidden" "ne" true).ByWeight }}
       {{ with $entries }}
         <section class="directory" aria-label="课程目录">
-          <h2>课程目录</h2>
+          <h1>课程目录</h1>
           <ul>
             {{ range . }}
               <li>{{ partial "directory-node.html" . }}</li>
@@ -103,6 +101,8 @@
           </ul>
         </section>
       {{ end }}
+    {{ else }}
+      {{- .Content -}}
     {{ end }}
   </article>
 {{ end }}

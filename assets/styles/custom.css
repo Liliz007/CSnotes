@@ -379,7 +379,7 @@ body { background: var(--page-surface); color: var(--page-ink); }
   .site-main { display: flex; flex-direction: column; }
   .site-main .book-page { order: 1; }
   .site-course-sidebar { flex-basis: auto; border: 0; }
-  .site-course-notes { position: static; max-height: 35vh; }
+  .site-course-notes { position: static; max-height: none; }
   .site-main .book-toc { display: block; width: auto; padding-inline: 1rem; border: 0; }
   .site-main .book-toc-content { position: static; width: auto; height: auto; max-height: 35vh; padding: .75rem 0; }
 }
