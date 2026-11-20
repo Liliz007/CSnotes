@@ -15,6 +15,12 @@
       </ul>
     </div>
   </details>
-{{- else if and $page.IsPage $page.Content -}}
-  <a class="directory-page" href="{{ $page.RelPermalink }}"{{ if eq $page $current }} aria-current="page"{{ end }}>{{ $page.LinkTitle }}</a>
+{{- else if and $page.IsPage $page.RelPermalink -}}
+  {{- $label := $page.LinkTitle -}}
+  {{- if not $label -}}
+    {{- with $page.File -}}
+      {{- $label = replace .ContentBaseName "_" " " -}}
+    {{- end -}}
+  {{- end -}}
+  <a class="directory-page" href="{{ $page.RelPermalink }}"{{ if eq $page $current }} aria-current="page"{{ end }}>{{ $label }}</a>
 {{- end -}}
