@@ -7,9 +7,7 @@
 <body dir="{{ default "ltr" .Site.Language.Direction }}" class="book-kind-{{ .Kind }} book-type-{{ .Type }}{{ with .Layout }} book-layout-{{ . }}{{ end }}">
   {{ partial "site-header" . }}
   <main class="container flex site-main">
-    {{ template "toc-container" . }}
-
-
+    {{ template "menu-container" . }}
 
     <div class="book-page">
       {{ partial "docs/inject/content-before" . }}
@@ -28,7 +26,7 @@
       <label for="menu-control" class="hidden book-menu-overlay" aria-hidden="true"></label>
     </div>
 
-
+    {{ template "toc-container" . }}
   </main>
 
   {{ partial "docs/inject/body" . }}
@@ -36,19 +34,26 @@
 </html>
 
 {{ define "menu-container" }}
-<aside class="book-menu">
-  <div class="book-menu-content">
-    {{ template "menu" . }}
-  </div>
-</aside>
-{{ end }}
-
-{{ define "menu" }}
-  {{ partial "docs/menu" . }}
-{{ end }}
-
-{{ define "header" }}
-  {{ partial "docs/header" . }}
+  {{ $current := . }}
+  {{ with .FirstSection }}
+    {{ range where .Sections "Params.bookHidden" "ne" true }}
+      {{ if or (eq . $current) (.IsAncestor $current) }}
+        <aside class="site-course-sidebar" aria-label="课程笔记">
+          <details class="site-course-notes" open>
+            <summary>课程笔记</summary>
+            <nav aria-label="{{ .LinkTitle }}">
+              <p><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></p>
+              <ul>
+                {{ range (where .Pages "Params.bookHidden" "ne" true).ByWeight }}
+                  <li>{{ partial "directory-node.html" . }}</li>
+                {{ end }}
+              </ul>
+            </nav>
+          </details>
+        </aside>
+      {{ end }}
+    {{ end }}
+  {{ end }}
 {{ end }}
 
 {{ define "breadcrumbs" }}
@@ -86,6 +91,19 @@
 {{ define "main" }}
   <article class="markdown book-article">
     {{- .Content -}}
+    {{ if and .IsSection .Parent.IsHome }}
+      {{ $entries := (where .Pages "Params.bookHidden" "ne" true).ByWeight }}
+      {{ with $entries }}
+        <section class="directory" aria-label="课程目录">
+          <h2>课程目录</h2>
+          <ul>
+            {{ range . }}
+              <li>{{ partial "directory-node.html" . }}</li>
+            {{ end }}
+          </ul>
+        </section>
+      {{ end }}
+    {{ end }}
   </article>
 {{ end }}
 

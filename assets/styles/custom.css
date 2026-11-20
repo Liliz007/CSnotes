@@ -355,12 +355,31 @@ body { background: var(--page-surface); color: var(--page-ink); }
 .site-nav input, #site-theme { color: var(--page-ink); background: var(--page-surface); border: 1px solid var(--page-accent); border-radius: .35rem; padding: .4rem .65rem; }
 #site-theme { cursor: pointer; }
 .site-main .book-page { min-width: 0; }
-.site-main .book-toc { order: -1; border-inline-end: 1px solid var(--page-accent); }
+.site-main .book-toc { border-inline-start: 1px solid var(--page-accent); }
+.site-course-sidebar {
+  flex: 0 0 15rem;
+  min-width: 0;
+  border-inline-end: 1px solid var(--page-accent);
+}
+.site-course-notes {
+  position: sticky;
+  top: 4rem;
+  max-height: calc(100vh - 4rem);
+  overflow: auto;
+  padding: 1rem;
+}
+.site-course-notes a { color: var(--color-link); overflow-wrap: anywhere; }
+.site-course-notes ul { padding-inline-start: 1rem; }
+.site-course-notes li { margin-block: .35rem; }
+.site-course-notes summary, .site-main .site-toc summary { cursor: pointer; }
 .site-main .book-toc-content { top: 4rem; }
 .site-main .markdown :is(h1,h2,h3,h4,h5,h6) { scroll-margin-top: 8rem; }
 .site-main .markdown .katex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding-block: .25rem; }
 @media (max-width: 56rem) {
-  .site-main { display: block; }
+  .site-main { display: flex; flex-direction: column; }
+  .site-main .book-page { order: 1; }
+  .site-course-sidebar { flex-basis: auto; border: 0; }
+  .site-course-notes { position: static; max-height: 35vh; }
   .site-main .book-toc { display: block; width: auto; padding-inline: 1rem; border: 0; }
   .site-main .book-toc-content { position: static; width: auto; height: auto; max-height: 35vh; padding: .75rem 0; }
 }

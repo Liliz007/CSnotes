@@ -16,7 +16,10 @@
     updateButton();
   });
   const toc = document.querySelector('.site-toc');
-  if (toc) toc.open = !window.matchMedia('(max-width: 56rem)').matches;
+  const compact = window.matchMedia('(max-width: 56rem)').matches;
+  if (toc) toc.open = !compact;
+  const course = document.querySelector('.site-course-notes');
+  if (course) course.open = !compact;
 
   const article = document.querySelector('.book-article');
   if (article && typeof renderMathInElement === 'function') renderMathInElement(article, {
