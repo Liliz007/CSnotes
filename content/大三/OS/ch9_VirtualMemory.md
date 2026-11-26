@@ -411,3 +411,52 @@ TLB reach = TLB Size(num of entries) x Page Size
 {{< /collapse >}}
 
 >偏应用。根据具体的存储结构来编程。
+
+# 10. 小测讲评
+
+![](image/2026-11-24-16-54-30.png)
+B
+
+![](image/2026-11-24-16-48-50.png)
+- 把具体的entry引用画出来，看相同前缀的entry是在同一张PT里的
+- 10
+
+![](image/2026-11-24-16-54-44.png)
+A
+
+![](image/2026-11-24-16-54-53.png)
+C
+
+![](image/2026-11-24-16-55-13.png)
+B
+
+![](image/2026-11-24-17-06-15.png)
+A
+
+![](image/2026-11-24-17-08-29.png)
+C
+
+![](image/2026-11-24-17-10-32.png)
+
+P1 P2 P1 P3 P2 P4 P5 P2 P4
+
+AVG waiting time=3
+
+![](image/2026-11-24-17-13-34.png)
+![](image/2026-11-24-17-13-46.png)
+
+A.fork()要画树，4个进程
+
+B.
+3次page fault：code+stack+heap and global
+
+9次
+
+![](image/2026-11-24-17-16-16.png)
+
+写出VA转换出的VPN[i]，i=0,1,2
+
+可以由各级页表基址和idx（VPN）求出PTE的物理地址。分别为
+PPN[2]=0x1010，PPN[1]=0x2000，PPN[0]=0x3000
+
+写各级PTE：

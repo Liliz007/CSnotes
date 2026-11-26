@@ -140,6 +140,7 @@ Uniprocessors（单处理器）：关中断
 * 防止当前程序在临界区中被抢占
 * 缺点：
   * 对于多处理器来说，一个CPU关中断阻止不了其他CPU访问临界区（？？那都关怎么就阻止了？？本来也是不同的进程不是吗）
+  * corrupt是啥意思？
 
 现代处理器：Specific Atomic hardware inst（特殊原子硬件指令）
 * 有两类：
@@ -355,6 +356,9 @@ signal(S);
 {{< tab "例一" >}}
 ![](image/2026-11-19-15-29-59.png)
 * 本例中，S要初始化为0。若为正数，则S2就可以先运行
+* 推广到多个指令的时序保证也是一样的，见quiz例题：
+![](image/2026-11-26-14-29-34.png)
+* X同时挟制B和C的运行；Y挟制C的运行
 {{< /tab >}}
 {{< tab "例二" >}}
 ![](image/2026-11-19-15-32-55.png)
@@ -410,6 +414,144 @@ Signal (S){
 
 总之，Sleep Lock和Spin Lock的优劣刚好相反。
 
+### 补充
+
+![](image/2026-11-24-17-34-11.png)
+
+![](image/2026-11-24-17-34-30.png)
+- 若没有在Sleep，wakeup就不会生效。也就是说，wakeup不能发生在sleep之前
+
+![](image/2026-11-24-17-36-02.png)
+- 会造成deadlock
+  - 因为sleep的时候上了锁，而wakeup又要申请锁，它就要一直等待前者释放锁
+  - 而sleep又要等count++
+
+![](image/2026-11-24-17-38-10.png)
+- 把锁作为参数传给sleep，让它先解锁再入睡
+
+## 5.3 Deadlock and Starvation
+
+![](image/2026-11-24-17-41-25.png)
+
 # 6. Classic Problems of Synchronization
 
+## 6.1 Bounded-Buffer Problem
+
+生产者-消费者共享Buffer管理问题
+
+![](image/2026-11-24-17-45-03.png)
+
+生产者：
+```c
+while (true) { 
+    // produce an item 
+  wait (empty); 
+  wait (mutex); 
+    // add the item to the buffer 
+  signal (mutex); 
+  signal (full); 
+  }
+```
+
+消费者：
+```c
+while (true) { 
+  wait (full); 
+  wait (mutex); 
+    // remove an item from buffer 
+  signal (mutex); 
+  signal (empty); 
+    // consume the removed item 
+  }
+
+```
+
+>这里mutex信号量是用来保证同一时刻只有一人能访问buffer
+
+练习：
+![](image/2026-11-24-17-47-40.png)
+
+## 6.2 Readers and Writers Problem
+
+- readers：只读。可以多读者并发
+- writers：只有一人能写
+
+共享数据：
+- 共享data set
+- 信号量：
+  - mutex：初值为1，保护readcount这个锁
+  - wrt：初值为1，保证reader和writer的互斥
+  - readcount：初值为0，记录当前正在读的reader数
+
+其实可以把一堆readers看成一个writer，来进行读写互斥的实现；也可以说，把第一个reader当作一位领袖，其只能接纳自己的族人
+
+writer process：使用互斥锁wrt
+```c
+while (true) 
+{ 
+  wait (wrt) ; 
+  // writing is performed 
+  signal (wrt) ; 
+}
+```
+
+reader process：使用readcount实现共享
+```c
+while (true) 
+{ 
+  wait (mutex) ; 
+  readcount ++ ; 
+  if (readcount == 1) wait (wrt) ; //这个reader是一个组长
+  signal (mutex) 
+
+    reading is performed 
+
+  wait (mutex) ; 
+  readcount - - ; 
+  if (readcount == 0) signal (wrt) ; 
+  signal (mutex) ; 
+}
+```
+
+## 6.3 Dining-Philosophers Problem，哲学家吃饭问题
+
+![](image/2026-11-26-15-06-19.png)
+
+- 防止死锁：统一规定先拿左手再拿右手
+
+Philosopher i：
+```c
+While (true) 
+{ 
+  wait ( chopstick[i] ); //拿左手
+  wait ( chopStick[ (i + 1) % 5] );  //拿右手
+
+  // eat 
+
+  signal ( chopstick[i] ); //放左手
+  signal (chopstick[ (i + 1) % 5] );  //放右手
+
+  // think 
+
+  }
+```
+
+- 对面的人可以同时吃。这并不是只允许一个人访问rice的（如果想限为一个人的话直接放一把互斥锁得了
+- 有死锁：所有人同时拿左手筷，等一圈
+  - Solution1：先wait编号小的筷子，再wait编号大的筷子
+    - 这样，圈末那个人会反着来，先拿右手筷再拿左手筷。这样等到圈末就能有人拿到一双了（图示：
+  - Solution2：或者要求只有x个人能同时拿筷子。（增设一个count信号量）
+  - Solution3：再或者，对奇偶编号的人做不同的拿筷顺序规定
+
 # 7. Synchronization eg
+
+# 8. 例题
+
+## 8.1 quiz
+
+![](image/2026-11-24-16-43-09.png)
+- 故意用左边的头和尾覆盖
+
+待补充两题？？
+- 注意看清楚进程号啊。。😓
+- Semaphore的值为负时，其绝对值代表有多少个进程在waiting queue中
