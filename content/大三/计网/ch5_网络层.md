@@ -148,7 +148,10 @@ CIDR,Classless Inter-Domain Routing：无分类域间路由，即在IPv4地址�
 
 ## 2.3 DHCP，动态主机配置协议
 
-- Dynamic Host Configuration Protocol，给主机动态分配IP地址，允许主机**加入新的网络、自动获取IP地址**而不用手工参与
+### 概述
+
+- Dynamic Host Configuration Protocol，给主机动态分配IP地址，允许主机**加入新的网络、自动获取IP地址**，而不用手工配置各主机的IP等信息
+  - 为此向网络中添加一台DHCP服务器，让PC们开机启动DHCP程序，自己请求并配置网络信息
   - 从而，更方便移动主机的IP获取
   - DHCP是应用层的基于UDP的协议：因为TCP是面向连接的，而客户一开始连IP都没有，当然无法建立连接
 
@@ -156,10 +159,12 @@ CIDR,Classless Inter-Domain Routing：无分类域间路由，即在IPv4地址�
   - IP地址
   - 子网掩码
   - 默认网关（的IP地址）
-  - 域名服务器（的IP地址）
+  - 域名服务器，即DNS服务器（的IP地址）
 - 使用Client/Server模型
   - 发现报文：广播寻找DHCP服务器
   - 提供报文：DHCP的回答信息
+
+### 工作过程
 
 {{< collapse summary="查看配图" >}}
 ![](image/2026-11-23-10-32-04.png)
@@ -168,18 +173,35 @@ CIDR,Classless Inter-Domain Routing：无分类域间路由，即在IPv4地址�
 
 | 报文 | 说明 |
 | --- | --- |
-| DHCPdiscover | 客户**广播**DHCP发现消息，找到（可能多个）服务器 |
-| DHCPoffer | 服务器收到DHCP发现消息后，**单播/广播**DHCP提供消息，其中包含分配给客户的IP地址 |
-| DHCPrequest | 客户收到（可能多个）提供消息后，若接受此地址，则**广播**DHCP请求消息 |
-| DHCPack | 服务器收到后，**单播/广播**DHCP确认消息，将此IP分配给客户 |
+| DHCPdiscover | 客户**广播**DHCP发现消息，找到（可能多个）服务器。只有服务器会监听端口67（DHCP服务器进程），会接受DHCP DISCOVER报文；报文中封装有事务ID和客户主机的MAC地址 |
+| DHCPoffer | 服务器收到DHCP发现消息后，查找对应MAC地址的配置信息，若没有，则用默认信息配置；**单播/广播**DHCP提供消息，其中包含分配给客户的IP地址 |
+| DHCPrequest | 客户收到（可能多个）提供消息后，根据事务ID确定是否是自己的请求回复。若接受此地址，则**广播**DHCP请求消息（包含租约中的IP和包租婆服务器IP） |
+| DHCPack | 包租婆服务器收到后，**单播/广播**DHCP确认消息，将此IP分配给客户 |
 
 - 租用期：客户可使用分配到的IP的期限
+- 注意，DHCP收到DHCPack后，会用ARP检查这个IP是否已被占用；若被占用，它会向服务器发送DHCPdecline（谢绝报文）并重新DHCPdiscover
+- 延长租用期：租用期过了一半时，客户会发送DHCPrequest请求刷新租用期；
+  - 服务器同意，回应ACK
+  - 服务器拒绝，回应NACK，并立即收回出租的配置
+  - 服务器未响应：...更多情况见图
 
-{{< collapse summary="查看配图" >}}
+{{< collapse summary="工作过程（详细版）" >}}
+![](image/2026-11-28-14-54-19.png)
+{{< /collapse >}}
+
+{{< collapse summary="通信报文类型" >}}
 ![](image/2026-11-23-10-39-13.png)
+- 还是问一下吧，提供报文为啥目的地址可以是单播啊
 {{< /collapse >}}
 
 >考试还是按课件来吧。受限广播地址无法转发给本局域网以外的地址，因此若server在别的网段，就要用DHCP Relay（中继器）。但这个没讲，估计不是很重要
+
+### DHCP中继代理(Relay)
+
+![](image/2026-11-28-14-57-09.png)
+
+- 为了解决路由器隔离广播域，但又不想在每个网段配一个DHCP服务器的问题，可以使用DHCP中继代理机制
+- 将路由器配置为DHCP中继代理，它收到DHCP广播报文后就能单播给DHCP服务器了
 
 # 3. IPv4 数据报与转发
 
